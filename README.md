@@ -35,5 +35,28 @@ pip install lokki
 
 ## Quick Start
 
+The following code example illustrates basic library usage
+
+```bash
+
+import lokki
+import pandas as pd
+
+data = pd.read_csv('./data/test.csv')
+
+analysis = lokki.configure(models = ['random_forest', 'logistic_regression'],
+                           target_name = 'target',
+                           transforms = ['pca', 'chi_square', 'none'],
+                           dataset = data,
+                           metric = 'auc')
+
+results = analysis.run()
+
+lokki.plot(analysis_object = results,
+           plot_type = 'stacked',
+           output_filename = 'out.png')
+
+```
+
 **Working on your first Pull Request?** You can learn how from this _free_ series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
 
