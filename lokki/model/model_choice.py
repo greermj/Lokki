@@ -15,3 +15,7 @@ class ModelChoice(object, metaclass = ABCMeta):
     @abstractmethod
     def predict(self, X):
         pass
+
+    @abstractmethod
+    def get_model_name(self):
+        pass
