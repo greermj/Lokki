@@ -1,5 +1,7 @@
 from itertools import product 
 
+from lokki.analyze import ModelTransformAnalysis 
+
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['models'], kwargs['transforms'], kwargs['metric'])
 
@@ -12,5 +14,12 @@ class AnalysisFactory:
         self.metric = metric 
 
     def run(self):
-        pass
+        result = dict()
+        
+        for model, transform in self.model_transform_tuples:
+            result[transform + '_' + model] = 0
+
+
+        print(result)
+        return result 
     
