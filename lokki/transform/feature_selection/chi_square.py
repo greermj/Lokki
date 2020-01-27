@@ -1,4 +1,6 @@
-from sklearn.feature_selection import chi2
+import numpy as np
+
+from sklearn.feature_selection import SelectKBest, chi2
 
 from lokki.transform import TransformChoice
 
@@ -6,12 +8,14 @@ class ChiSquare(TransformChoice):
 
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape
+        self.step_size = int(dataset_shape[1] * 0.20)
+        self.grid = [{'k' : x} for x in np.arange(dataset_shape[1] - 1, step = self.step_size) + 1]
 
     def fit_transform(self, hyperparameters, X, y):
-        pass
+        return SelectKBest(chi2, **hyperparameters).fit_transform(X,y)
 
-    def get_model_name(self):
+    def get_name(self):
         return 'Chi Square'
 
     def hyperparameter_grid(self):
-        pass
+        return self.grid
