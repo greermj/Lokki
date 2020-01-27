@@ -37,14 +37,14 @@ class AnalysisFactory:
             elif transform.lower() == 'chi_square':
                 analysis_transform = ChiSquare(self.dataset_shape)
             else:
-                print('bang')
+                print('Error: Transform method not found')
 
             if model.lower() == 'random_forest':
                 analysis_model = RandomForest()
             elif model.lower() == 'logistic_regression':
                 analysis_model = LogisticRegression()
             else:
-                print('hang')
+                print('Error: Model method not found')
 
             self.analysis_runs.append(ModelTransformAnalysis(analysis_transform, analysis_model, self.parameters))
 
@@ -53,5 +53,4 @@ class AnalysisFactory:
         result = dict()
         
         for i, analysis in enumerate(self.analysis_runs):
-            print(analysis.transform_instance.get_model_name())
             result[i] = analysis.get_performance(self.dataset)
