@@ -17,5 +17,5 @@ class ModelChoice(object, metaclass = ABCMeta):
         pass
 
     @abstractmethod
-    def get_model_name(self):
+    def get_name(self):
         pass
