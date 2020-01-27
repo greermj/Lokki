@@ -13,5 +13,5 @@ class LogisticRegression(ModelChoice):
     def predict(self, X):
         pass
 
-    def get_model_name(self):
+    def get_name(self):
         return 'Logistic Regression'
