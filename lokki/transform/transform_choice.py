@@ -5,17 +5,17 @@ from abc import ABCMeta, abstractmethod
 
 class TransformChoice(object, metaclass = ABCMeta):
 
-    def __init__(self):
+    def __init__(self, dataset_shape):
         pass
 
     @abstractmethod
-    def fit(self, X, y):
-        pass
-
-    @abstractmethod
-    def predict(self, X):
+    def fit_transform(self, hyperparameters, X, y):
         pass
 
     @abstractmethod
     def get_model_name(self):
+        pass
+
+    @abstractmethod
+    def hyperparameter_grid(self):
         pass
