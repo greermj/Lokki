@@ -8,8 +8,8 @@ class Void(TransformChoice):
     def fit_transform(self, hyperparameters, X, y):
         pass
 
-    def get_model_name(self):
+    def get_name(self):
         return 'Void'
 
     def hyperparameter_grid(self):
-        pass
+        return None
