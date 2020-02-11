@@ -1,3 +1,7 @@
+import sys
+import numpy as np
+from sklearn.model_selection import StratifiedKFold
+
 # Notes: Should run data through each grid transform and then the model and return the top performance 
 class ModelTransformAnalysis:
     
@@ -7,23 +11,82 @@ class ModelTransformAnalysis:
         self.model_instance = model_instance
         self.parameters = parameters
 
-    # For each param in grid run transform then get and store model performance (keep track of max)
     def get_performance(self, dataset):
 
+        # The dataset 
+        X = dataset.drop(self.parameters['target_name'], axis = 1).copy().reset_index(drop = True)
+        y = dataset[self.parameters['target_name']].copy().reset_index(drop = True)
+
+        # Final result returned; it is a list of means over the CV folds 
+        iteration_performance_results = []
+
+        # Transform hyperparameter options
         hyperparameter_grid = self.transform_instance.hyperparameter_grid()
 
-        if hyperparameter_grid != None:
+        # For each iteration of the nested CV
+        for i, iteration in enumerate(range(self.parameters['num_iterations'])):
 
-            X = dataset.drop(self.parameters['target_name'], axis = 1).copy()
-            y = dataset[self.parameters['target_name']].copy()
+            # If this analysis has a transform step 
+            if hyperparameter_grid != None:
 
-            optimal_score = None
-            
-            for grid in self.transform_instance.hyperparameter_grid():
+                optimal_score = 0
 
-                X_train = self.transform_instance.fit_transform(grid, X, y)
+                # Determine which transform hyperparameter has the highest OOS performance using CV 
+                for j, grid in enumerate(self.transform_instance.hyperparameter_grid()):
+
+                    skf = StratifiedKFold(random_state = 2*i + j + 1 , n_splits = self.parameters['num_folds'])
+
+                    fold_results = []
                 
+                    # For each fold
+                    for train_index, test_index in skf.split(X, y):
+            
+                        X_train, X_test = X.iloc[train_index,:], X.iloc[test_index,:]
+                        y_train, y_test = y[train_index], y[test_index]
 
-        else:
+                        # Prepare training data
+                        self.transform_instance.fit(grid, X_train, y_train)
 
-            pass
+                        transformed_X_train = self.transform_instance.transform(X_train, y_train)
+                        transformed_X_test = self.transform_instance.transform(X_test, y_test)
+
+                        # Get performance 
+                        performance = self.model_instance.evaluate(self.parameters, transformed_X_train, transformed_X_test, y_train, y_test)
+
+                        fold_results.append(performance)
+        
+                    if np.mean(fold_results) > optimal_score:
+                        optimal_score = np.mean(fold_results)
+
+                # Store the mean 
+                iteration_performance_results.append(optimal_score)
+
+            else:
+
+                # Perform same analysis above only without grid searching of transform hyperparameters 
+                skf = StratifiedKFold(random_state = i, n_splits = self.parameters['num_folds'])
+
+                fold_results = []
+
+                optimal_score = 0
+
+                for train_index, test_index in skf.split(X, y):
+
+                    X_train, X_test = X.iloc[train_index,:], X.iloc[test_index,:]
+                    y_train, y_test = y[train_index], y[test_index]
+
+                    self.transform_instance.fit('', X_train, y_train)
+
+                    transformed_X_train = self.transform_instance.transform(X_train, y_train)
+                    transformed_X_test = self.transform_instance.transform(X_test, y_test)
+
+                    performance = self.model_instance.evaluate(self.parameters, transformed_X_train, transformed_X_test, y_train, y_test)
+
+                    fold_results.append(performance)
+    
+                if np.mean(fold_results) > optimal_score:
+                    optimal_score = np.mean(fold_results)
+                
+                iteration_performance_results.append(optimal_score)
+        
+        return iteration_performance_results
