@@ -9,7 +9,11 @@ class TransformChoice(object, metaclass = ABCMeta):
         pass
 
     @abstractmethod
-    def fit_transform(self, hyperparameters, X, y):
+    def fit(self, hyperparameters, X, y):
+        pass
+
+    @abstractmethod
+    def transform(self, X, y):
         pass
 
     @abstractmethod
