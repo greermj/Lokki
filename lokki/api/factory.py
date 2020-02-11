@@ -4,12 +4,16 @@ from lokki.analyze import ModelTransformAnalysis
 
 # Models 
 from lokki.model import RandomForest
-from lokki.model import LogisticRegression
+from lokki.model import LogisticRegressionModel
+from lokki.model import SVM
 
 # Tranforms 
 from lokki.transform import PCA
 from lokki.transform import ChiSquare
 from lokki.transform import Void
+
+# Visualizations 
+from lokki.visualize import Stacked 
 
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
@@ -21,7 +25,7 @@ class AnalysisFactory:
         self.dataset = dataset
         self.dataset_shape = dataset.shape
         self.model_transform_tuples = list(product(transforms, models))
-        self.parameters  = {'target_name' : target_name, 'metric' : metric}
+        self.parameters  = {'target_name' : target_name, 'metric' : metric, 'num_iterations' : 5, 'num_folds' : 5}
 
         self.analysis_runs = []
 
@@ -42,7 +46,9 @@ class AnalysisFactory:
             if model.lower() == 'random_forest':
                 analysis_model = RandomForest()
             elif model.lower() == 'logistic_regression':
-                analysis_model = LogisticRegression()
+                analysis_model = LogisticRegressionModel()
+            elif model.lower() == 'svm':
+                analysis_model = SVM()
             else:
                 print('Error: Model method not found')
 
@@ -50,7 +56,15 @@ class AnalysisFactory:
 
     def run(self):
 
-        result = dict()
+        self.results = dict()
         
         for i, analysis in enumerate(self.analysis_runs):
-            result[i] = analysis.get_performance(self.dataset)
+            result_key = '_'.join(analysis.transform_instance.get_name().lower().split(' ')) + '_' + '_'.join(analysis.model_instance.get_name().lower().split(' ')) 
+            print('Analyzing: ' + result_key)
+            self.results[result_key] = analysis.get_performance(self.dataset)
+
+        return self
+
+
+    def visualize(self):
+        Stacked(self.results)
