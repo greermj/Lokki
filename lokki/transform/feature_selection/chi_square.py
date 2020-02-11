@@ -11,8 +11,11 @@ class ChiSquare(TransformChoice):
         self.step_size = int(dataset_shape[1] * 0.20)
         self.grid = [{'k' : x} for x in np.arange(dataset_shape[1] - 1, step = self.step_size) + 1]
 
-    def fit_transform(self, hyperparameters, X, y):
-        return SelectKBest(chi2, **hyperparameters).fit_transform(X,y)
+    def fit(self, hyperparameters, X, y):
+        self.chi = SelectKBest(chi2, **hyperparameters).fit(X,y)
+
+    def transform(self, X, y):
+        return self.chi.transform(X)
 
     def get_name(self):
         return 'Chi Square'

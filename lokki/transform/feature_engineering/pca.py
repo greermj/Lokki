@@ -10,8 +10,11 @@ class PCA(TransformChoice):
         self.step_size = int(dataset_shape[1] * 0.20)
         self.grid = [{'n_components' : x} for x in np.arange(dataset_shape[1] - 1, step = self.step_size) + 1]
 
-    def fit_transform(self, hyperparameters, X, y):
-        return sk.decomposition.PCA(**hyperparameters).fit_transform(X)
+    def fit(self, hyperparameters, X, y):
+        self.pca = sk.decomposition.PCA(**hyperparameters).fit(X)
+
+    def transform(self, X, y):
+        return self.pca.transform(X)
 
     def get_name(self):
         return 'PCA'
