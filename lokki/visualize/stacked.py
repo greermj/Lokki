@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 class Stacked:
 
     def __init__(self, results):
+        self.results = results 
+
+    def run(self, filename):
+
 
         keys = tuple(results.keys())
         y_pos = np.arange(len(keys))
@@ -27,4 +31,4 @@ class Stacked:
         plt.title('AUC')
         plt.yticks(y_pos, sorted_keys)
         plt.xlabel('')
-        plt.show()
+        plt.savefig(filename)
