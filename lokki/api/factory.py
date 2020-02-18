@@ -18,6 +18,19 @@ from lokki.visualize import Stacked
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
 
+def plot(**kwargs):
+
+    analysis_object = kwargs['analysis_object']
+
+    plot_object = None
+    
+    if kwargs['form'].lower() == 'stacked':
+        plot_object = Stacked(analysis_object.results)
+    if kwargs['form'].lower() == 'enrichment':
+        pass
+        
+    plot_object.run(kwargs['output_filename'])
+
 class AnalysisFactory:
 
     def __init__(self, dataset, target_name, transforms, models, metric):
@@ -64,7 +77,3 @@ class AnalysisFactory:
             self.results[result_key] = analysis.get_performance(self.dataset)
 
         return self
-
-
-    def visualize(self):
-        Stacked(self.results)
