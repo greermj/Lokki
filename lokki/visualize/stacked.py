@@ -10,7 +10,7 @@ class Stacked:
     def run(self, filename):
 
 
-        keys = tuple(results.keys())
+        keys = tuple(self.results.keys())
         y_pos = np.arange(len(keys))
 
         scores = []
@@ -18,17 +18,18 @@ class Stacked:
         all_results = dict()
         
         for label in keys:
-            scores.append(np.mean(results[label]))
+            scores.append(np.mean(self.results[label]))
             labels.append(label)
-            all_results[label] = np.mean(results[label])
+            all_results[label] = np.mean(self.results[label])
 
         sorted_results = {k: v for k, v in sorted(all_results.items(), key=lambda item: item[1])}
 
         sorted_keys = tuple(sorted_results.keys())
         sorted_values = tuple(sorted_results.values())
 
+        plt.figure(figsize=(22, 4), dpi=100)
         plt.barh(y_pos, sorted_values)
         plt.title('AUC')
         plt.yticks(y_pos, sorted_keys)
         plt.xlabel('')
-        plt.savefig(filename)
+        plt.savefig(filename, dpi=1000)
