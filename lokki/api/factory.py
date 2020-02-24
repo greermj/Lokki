@@ -24,6 +24,7 @@ from lokki.transform import NMF
 from lokki.transform import PCA
 
 from lokki.transform import ChiSquare
+from lokki.transform import MutualInformation
 from lokki.transform import Void
 
 # Visualizations 
@@ -76,6 +77,8 @@ class AnalysisFactory:
                 analysis_transform = Void(self.dataset_shape)
             elif transform.lower() == 'chi_square':
                 analysis_transform = ChiSquare(self.dataset_shape)
+            elif transform.lower() == 'mutual_information':
+                analysis_transform = MutualInformation(self.dataset_shape)
             else:
                 print('Error: Transform method not found')
 
