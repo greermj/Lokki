@@ -29,6 +29,7 @@ from lokki.transform import Void
 
 # Visualizations 
 from lokki.visualize import Stacked 
+from lokki.visualize import Enrichment 
 
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
@@ -42,7 +43,7 @@ def plot(**kwargs):
     if kwargs['plot_type'].lower() == 'stacked':
         plot = Stacked(analysis_object.results)
     if kwargs['plot_type'].lower() == 'enrichment':
-        pass
+        plot = Enrichment(analysis_object.results)
         
     plot.run(kwargs['output_filename'])
 
