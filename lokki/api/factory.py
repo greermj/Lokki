@@ -3,12 +3,26 @@ from itertools import product
 from lokki.analyze import ModelTransformAnalysis 
 
 # Models 
+from lokki.model import AdaBoost
+from lokki.model import GradientBoosting
 from lokki.model import RandomForest
+
 from lokki.model import LogisticRegressionModel
+from lokki.model import RidgeClassifierModel
 from lokki.model import SVM
 
+from lokki.model import DecisionTree
+from lokki.model import ExtraTree
+
+from lokki.model import LDA
+from lokki.model import QDA
+
 # Tranforms 
+from lokki.transform import FactorAnalysis
+from lokki.transform import ICA
+from lokki.transform import NMF
 from lokki.transform import PCA
+
 from lokki.transform import ChiSquare
 from lokki.transform import Void
 
@@ -22,14 +36,14 @@ def plot(**kwargs):
 
     analysis_object = kwargs['analysis_object']
 
-    plot_object = None
+    plot = None
     
-    if kwargs['form'].lower() == 'stacked':
-        plot_object = Stacked(analysis_object.results)
-    if kwargs['form'].lower() == 'enrichment':
+    if kwargs['plot_type'].lower() == 'stacked':
+        plot = Stacked(analysis_object.results)
+    if kwargs['plot_type'].lower() == 'enrichment':
         pass
         
-    plot_object.run(kwargs['output_filename'])
+    plot.run(kwargs['output_filename'])
 
 class AnalysisFactory:
 
@@ -47,19 +61,43 @@ class AnalysisFactory:
             analysis_transform = None
             analysis_model = None
 
-            if transform.lower() == 'none':
-                analysis_transform = Void(self.dataset_shape)
+            # Feature Engineering Strategies 
+            if transform.lower() == 'factor':
+                analysis_transform = FactorAnalysis(self.dataset_shape)
+            elif transform.lower() == 'ica':
+                analysis_transform = ICA(self.dataset_shape)
+            elif transform.lower() == 'nmf':
+                analysis_transform = NMF(self.dataset_shape)
             elif transform.lower() == 'pca':
                 analysis_transform = PCA(self.dataset_shape)
+
+            # Feature Selection Strategies
+            elif transform.lower() == 'none':
+                analysis_transform = Void(self.dataset_shape)
             elif transform.lower() == 'chi_square':
                 analysis_transform = ChiSquare(self.dataset_shape)
             else:
                 print('Error: Transform method not found')
 
+            # Modeling Strategies 
             if model.lower() == 'random_forest':
                 analysis_model = RandomForest()
+            elif model.lower() == 'decision_tree':
+                analysis_model = DecisionTree()
+            elif model.lower() == 'lda':
+                analysis_model = LDA()
+            elif model.lower() == 'qda':
+                analysis_model = QDA()
+            elif model.lower() == 'extra_tree':
+                analysis_model = ExtraTree()
             elif model.lower() == 'logistic_regression':
                 analysis_model = LogisticRegressionModel()
+            elif model.lower() == 'ridge':
+                analysis_model = RidgeClassifierModel()
+            elif model.lower() == 'adaboost':
+                analysis_model = AdaBoost()
+            elif model.lower() == 'gradient_boosting':
+                analysis_model = GradientBoosting()
             elif model.lower() == 'svm':
                 analysis_model = SVM()
             else:
