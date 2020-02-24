@@ -22,14 +22,14 @@ class Stacked:
             labels.append(label)
             all_results[label] = np.mean(self.results[label])
 
-        sorted_results = {k: v for k, v in sorted(all_results.items(), key=lambda item: item[1])}
+        sorted_results = {k: v for k, v in sorted(all_results.items(), key=lambda item: item[1], reverse = True)}
 
         sorted_keys = tuple(sorted_results.keys())
         sorted_values = tuple(sorted_results.values())
 
-        plt.figure(figsize=(22, 4), dpi=100)
-        plt.barh(y_pos, sorted_values)
-        plt.title('AUC')
-        plt.yticks(y_pos, sorted_keys)
-        plt.xlabel('')
-        plt.savefig(filename, dpi=1000)
+        plt.figure(figsize=(40, 55), dpi=100)
+        plt.bar(y_pos, sorted_values)
+        plt.xticks(y_pos, sorted_keys, rotation = 90, fontsize = 15)
+        plt.yticks(fontsize = 25)
+        plt.ylabel('AUC',fontsize=45)
+        plt.savefig(filename, dpi=100)
