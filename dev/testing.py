@@ -18,7 +18,7 @@ results = analysis.run()
 
 pickle.dump(results, open('results.p', 'wb'))
 '''
-results = pickle.load(open('results.p', 'rb'))
+results = pickle.load(open('mini_results.p', 'rb'))
 
 lokki.plot(analysis_object = results,
            plot_type = 'stacked',
