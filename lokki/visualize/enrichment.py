@@ -34,4 +34,5 @@ class Enrichment:
 
             plt.savefig('./dev/' + eset + '.png', dpi=100)
 
-
+    def get_ranked_list(self):
+        return list({k: v for k, v in sorted(self.results.items(), key=lambda item: np.mean(item[1]), reverse = True)}.keys())
