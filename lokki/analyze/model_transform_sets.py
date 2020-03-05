@@ -11,4 +11,6 @@ class ModelTransformSets:
                            'ensemble' : ['random_forest', 'adaboost', 'gradient_boosting'], 'linear' : ['svm', 'ridge'],
                            'feature_selection' : ['mutual_information', 'none', 'chi_square'], 'feature_engineering' : ['pca', 'ica', 'factor', 'nmf']}
 
-        return enrichment_sets, aggregate_sets
+        custom_sets = None
+
+        return enrichment_sets, aggregate_sets, custom_sets 

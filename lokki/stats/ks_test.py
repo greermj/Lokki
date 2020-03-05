@@ -4,7 +4,7 @@ class KSTest:
 
     def __init__(self, results):
         self.results = results 
-        self.enrichment_sets, self.aggregate_sets = ModelTransformSets().get_model_transform_sets()
+        self.enrichment_sets, self.aggregate_sets, self.custom_sets = ModelTransformSets().get_model_transform_sets()
 
         print(self.enrichment_sets)
 
