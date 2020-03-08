@@ -34,16 +34,32 @@ from lokki.visualize import Enrichment
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
 
+def custom(**kwargs):
+
+    class AnalysisObject:
+        def __init__(self, results):
+            self.results = results
+
+    results = dict()
+    sets    = []
+    data = kwargs['dataset']
+
+    for i in range(0, len(data)):
+        results.update({data.iloc[i]['method'] + '_' + str(data.iloc[i]['id']) : [float(data.iloc[i]['score'])]})
+
+    return AnalysisObject(results)
+
 def plot(**kwargs):
 
+    absolute        = kwargs['absolute'] if 'absolute' in kwargs else False
     analysis_object = kwargs['analysis_object']
-
+        
     plot = None
     
     if kwargs['plot_type'].lower() == 'stacked':
         plot = Stacked(analysis_object.results)
     if kwargs['plot_type'].lower() == 'enrichment':
-        plot = Enrichment(analysis_object.results)
+        plot = Enrichment(analysis_object.results, absolute)
         
     plot.run(kwargs['output_filename'])
 
