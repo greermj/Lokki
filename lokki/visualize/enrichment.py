@@ -1,23 +1,25 @@
 import sys
 
 import numpy as np
-
 import matplotlib.pyplot as plt
+
+from lokki.analyze import ModelTransformSets
 
 class Enrichment:
 
-    def __init__(self, results):
+    def __init__(self, results, absolute = False):
 
+        self.absolute = absolute
         self.results = results 
 
-        self.enrichment_sets = ['factor', 'ica', 'nmf', 'pca', 'none', 'chi_square', 'mutual_information',
-                                'random_forest', 'decision_tree', 'extra_tree', 'lda', 'qda', 'logistic_regression', 'ridge', 'adaboost', 'gradient_boosting', 'svm']
+        self.enrichment_sets,  self.aggregate_sets, self.custom = ModelTransformSets(results).get_model_transform_sets()
 
-        self.aggregate_sets  = {'tree-based' : ['decision_tree', 'extra_tree'], 'ensemble' : ['random_forest', 'adaboost', 'gradient_boosting'], 'linear' : ['svm', 'ridge'],
-                                'feature_selection' : ['mutual_information', 'none', 'chi_square'], 'feature_engineering' : ['pca', 'ica', 'factor', 'nmf']}
+        print(self.custom)
+
                                 
     def run(self, filename):
-
+        print('Here my')
+        '''
         for i, eset in enumerate(self.enrichment_sets):
 
             current_sets = [x for x in self.results.keys() if eset in x]
@@ -33,6 +35,7 @@ class Enrichment:
                 plt.axvline(x=np.mean(self.results[transform_model]), color='k', linewidth = 4)
 
             plt.savefig('./dev/' + eset + '.png', dpi=100)
+        '''
 
     def get_ranked_list(self):
         return list({k: v for k, v in sorted(self.results.items(), key=lambda item: np.mean(item[1]), reverse = True)}.keys())

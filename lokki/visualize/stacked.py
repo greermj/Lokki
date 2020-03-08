@@ -27,7 +27,7 @@ class Stacked:
         sorted_keys = tuple(sorted_results.keys())
         sorted_values = tuple(sorted_results.values())
 
-        plt.figure(figsize=(40, 100), dpi=100)
+        plt.figure(figsize=(80, 100), dpi=100)
         plt.bar(y_pos, sorted_values)
         plt.xticks(y_pos, sorted_keys, rotation = 75, fontsize = 45)
         plt.yticks(fontsize = 60)
