@@ -18,9 +18,11 @@ results = analysis.run()
 
 pickle.dump(results, open('results.p', 'wb'))
 '''
-results = pickle.load(open('mini_results.p', 'rb'))
+
+data = pd.read_csv('./dev/nature_test_data.csv')
+
+results = lokki.custom(dataset = data)
 
 lokki.plot(analysis_object = results,
-           plot_type = 'stacked',
-           #plot_type = 'enrichment',
+           plot_type = 'enrichment',
            output_filename = 'out.png')
