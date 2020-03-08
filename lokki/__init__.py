@@ -6,4 +6,5 @@ from . import visualize
 from . import stats
 
 from .api.factory import configure
+from .api.factory import custom
 from .api.factory import plot
