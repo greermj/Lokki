@@ -36,18 +36,15 @@ def configure(**kwargs):
 
 def custom(**kwargs):
 
-    class AnalysisObject:
-        def __init__(self, results):
-            self.results = results
-
-    results = dict()
-    sets    = []
+    results = []
     data = kwargs['dataset']
 
     for i in range(0, len(data)):
-        results.update({data.iloc[i]['method'] + '_' + str(data.iloc[i]['id']) : [float(data.iloc[i]['score'])]})
+        current_keys = tuple([x for x in data.columns.values[(data.iloc[i] == 1).values] if x.strip().lower() != 'sample' and x.strip().lower() != 'score'])
+        results.append({'key'   : current_keys,
+                        'value' : data.iloc[i]['score']})
 
-    return AnalysisObject(results)
+    return results
 
 def plot(**kwargs):
 
@@ -57,15 +54,24 @@ def plot(**kwargs):
     plot = None
     
     if kwargs['plot_type'].lower() == 'stacked':
-        plot = Stacked(analysis_object.results)
+        plot = Stacked(analysis_object)#analysis_object.results)
     if kwargs['plot_type'].lower() == 'enrichment':
         plot = Enrichment(analysis_object.results, absolute)
         
     plot.run(kwargs['output_filename'])
 
 class AnalysisFactory:
+    """Builds analysis objects"""
 
     def __init__(self, dataset, target_name, transforms, models, metric):
+        """AnalysisFactory init
+
+        :param dataset: pandas dataframe containing data to analyze 
+        :param target_name: target name that is present within the dataset
+        :param transforms: list of transforms to search 
+        :param models: list of models to search
+        :param metric: training metric (eg auc, precision, etc)
+        """
 
         self.dataset = dataset
         self.dataset_shape = dataset.shape
@@ -127,11 +133,13 @@ class AnalysisFactory:
 
     def run(self):
 
-        self.results = dict()
+        self.results = []
         
         for i, analysis in enumerate(self.analysis_runs):
-            result_key = '_'.join(analysis.transform_instance.get_name().lower().split(' ')) + '_' + '_'.join(analysis.model_instance.get_name().lower().split(' ')) 
-            print('Analyzing: ' + result_key)
-            self.results[result_key] = analysis.get_performance(self.dataset)
+            current_transform = '_'.join(analysis.transform_instance.get_name().lower().split(' '))
+            current_model     = '_'.join(analysis.model_instance.get_name().lower().split(' '))
+            print('Analyzing: ' + current_transform + '_' + current_model)
+            self.results.append({'key'   : (current_transform.strip().lower(), current_model.strip().lower()), 
+                                 'value' : analysis.get_performance(self.dataset)})
 
-        return self
+        return self.results
