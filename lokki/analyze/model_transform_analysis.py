@@ -89,4 +89,4 @@ class ModelTransformAnalysis:
                 
                 iteration_performance_results.append(optimal_score)
         
-        return iteration_performance_results
+        return np.mean(iteration_performance_results)
