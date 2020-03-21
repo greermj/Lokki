@@ -1,6 +1,7 @@
 from itertools import product 
 
 from lokki.analyze import ModelTransformAnalysis 
+from lokki.analyze import AnalysisObject
 
 # Models 
 from lokki.model import AdaBoost
@@ -36,27 +37,27 @@ def configure(**kwargs):
 
 def custom(**kwargs):
 
-    results = []
-    data = kwargs['dataset']
+    results        = []
+    data           = kwargs['dataset']
+    scoring_metric_name = kwargs['scoring_metric_name']
 
     for i in range(0, len(data)):
         current_keys = tuple([x for x in data.columns.values[(data.iloc[i] == 1).values] if x.strip().lower() != 'sample' and x.strip().lower() != 'score'])
         results.append({'key'   : current_keys,
                         'value' : data.iloc[i]['score']})
 
-    return results
+    return AnalysisObject(results, scoring_metric_name)
 
 def plot(**kwargs):
 
-    absolute        = kwargs['absolute'] if 'absolute' in kwargs else False
     analysis_object = kwargs['analysis_object']
         
     plot = None
     
     if kwargs['plot_type'].lower() == 'stacked':
-        plot = Stacked(analysis_object)#analysis_object.results)
+        plot = Stacked(analysis_object)
     if kwargs['plot_type'].lower() == 'enrichment':
-        plot = Enrichment(analysis_object.results, absolute)
+        plot = Enrichment(analysis_object)
         
     plot.run(kwargs['output_filename'])
 
@@ -142,4 +143,4 @@ class AnalysisFactory:
             self.results.append({'key'   : (current_transform.strip().lower(), current_model.strip().lower()), 
                                  'value' : analysis.get_performance(self.dataset)})
 
-        return self.results
+        return AnalysisObject(self.results, self.parameters['metric'])
