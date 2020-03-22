@@ -11,28 +11,52 @@ class Enrichment:
 
     def __init__(self, analysis_object):
         self.analysis_object = analysis_object
-        #self.results = results 
-        #self.enrichment_sets,  self.aggregate_sets, self.custom_sets = ModelTransformSets(results).get_model_transform_sets()
-
-
-        # Plot configurations
-        self.offset = 0.0015
-        self.linewidth =38
-        self.unit = 0.003
 
     def run(self, filename):
 
-        dimensions = list(set([x.lower() for y in self.analysis_object.results for x in y['key']]))
+        enrichment_plot_data = []
+        sorted_results = self.get_ranked_list()
+        dimensions = list(set([x for y in self.analysis_object.results for x in y['key']]))
 
-        print(dimensions)
-
-
+        # Add single dimension data
         for dimension in dimensions:
+            enrichment_results = []
+            dimension_results = [x for x in self.analysis_object.results if dimension in x['key']]
 
-            # Extract all results that contain dimension 
-            dimension_results = [x for x in self.analysis_object.results if dimension.lower() in [y.lower() for y in x['key']]]
+            # Establish map between key and rank in sorted list (ie enumerate data)
+            for x in dimension_results:
+                for i, y in enumerate(sorted_results):
+                    if x['key'] == y['key']:
+                       enrichment_results.append({'key': x['key'], 'rank' : i}) 
 
-            pass
+            enrichment_plot_data.append(enrichment_results)
+            print(dimension)
+            print(dimension_results)
+            print('\n')
+
+        # Add combination dimension data
+
+
+        print(sorted_results)
+
+        sorted_len = len(sorted_results)
+        linewidth = (100 / sorted_len) * 3.5
+        plt.xlim(0 - 1/(linewidth/2), 1 + 1/(linewidth/2))
+ 
+        for plot in enrichment_plot_data:
+    
+            for x in plot:
+                plt.axvline( ( 1/ sorted_len) * x['rank'], linewidth = (100 / sorted_len) * 3.5)
+            print('plot')
+            print(plot)
+            break
+
+
+
+        return sorted_results, enrichment_plot_data, self.analysis_object
+
+
+         
 
         '''
         print(self.get_ranked_list())
@@ -68,4 +92,4 @@ class Enrichment:
         print('done')
 
     def get_ranked_list(self):
-        return sorted(results.results, key = lambda x : x['value'], reverse = True)
+        return sorted(self.analysis_object.results, key = lambda x : x['value'], reverse = True)
