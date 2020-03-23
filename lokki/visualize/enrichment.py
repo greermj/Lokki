@@ -17,6 +17,7 @@ class Enrichment:
         enrichment_plot_data = []
         sorted_results = self.get_ranked_list()
         dimensions = list(set([x for y in self.analysis_object.results for x in y['key']]))
+        rank_to_value = dict()
 
         # Add single dimension data
         for dimension in dimensions:
@@ -27,7 +28,8 @@ class Enrichment:
             for x in dimension_results:
                 for i, y in enumerate(sorted_results):
                     if x['key'] == y['key']:
-                       enrichment_results.append({'key': x['key'], 'rank' : i}) 
+                       enrichment_results.append({'key': x['key'], 'rank' : i, 'value' : x['value']}) 
+                       rank_to_value[i] = x['value'] 
 
             enrichment_plot_data.append(enrichment_results)
             print(dimension)
@@ -39,19 +41,55 @@ class Enrichment:
 
         print(sorted_results)
 
+
+        # Set layout parameters 
         sorted_len = len(sorted_results)
         linewidth = (100 / sorted_len) * 3.5
-        plt.xlim(0 - 1/(linewidth/2), 1 + 1/(linewidth/2))
- 
-        for plot in enrichment_plot_data:
-    
+        num_plots_per_page = 10
+        num_plots_per_page = num_plots_per_page if len(enrichment_plot_data) > num_plots_per_page else len(enrichment_plot_data)
+
+        # Set up subplots
+        current_plot_index = 0
+        #plt.subplots_adjust(hspace = 0.4)
+        fig, ax = plt.subplots(nrows = num_plots_per_page, ncols = 1)
+        fig.tight_layout()
+        #fig.set_figheight(5)
+        for cur_ax in ax:
+            cur_ax.set_xticks([])
+            cur_ax.set_yticks([])
+
+        # Plot data
+        for i, plot in enumerate(enrichment_plot_data):
+
+            # Reset subplots 
+            if (i % num_plots_per_page == 0) and (i != 0):
+                current_plot_index = 0
+                fig, ax = plt.subplots(nrows = num_plots_per_page, ncols = 1)
+                for cur_ax in ax:
+                    cur_ax.set_xticks([])
+                    cur_ax.set_yticks([])
+        
+            ax[current_plot_index].set_xlim(0 - 1/(linewidth/2), 1 + 1/(linewidth/2))
+            plot_ranks = []
+
             for x in plot:
-                plt.axvline( ( 1/ sorted_len) * x['rank'], linewidth = (100 / sorted_len) * 3.5)
+                ax[current_plot_index].axvline( ( 1/ sorted_len) * x['rank'], linewidth = (100 / sorted_len) * 3.5)
+                plot_ranks.append(x['rank'])
+
+            in_group =  [rank_to_value[x] for x in plot_ranks]
+            out_group = [rank_to_value[x] for x in range(0, len(sorted_results)) if not x in plot_ranks]
+            ks_stat, pvalue = stats.ks_2samp(in_group, out_group)
+            ax[current_plot_index].set_title('p-value: ' + str(round(pvalue,3)) + '  ks stat: ' + str(round(ks_stat,3)), loc='left')
+
+            current_plot_index += 1
+
             print('plot')
             print(plot)
-            break
+            print(plot_ranks)
+            print(in_group)
+            print(out_group)
 
-
+        plt.savefig('sav.png')
 
         return sorted_results, enrichment_plot_data, self.analysis_object
 
