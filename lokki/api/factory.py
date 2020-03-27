@@ -59,7 +59,7 @@ def plot(**kwargs):
     if kwargs['plot_type'].lower() == 'enrichment':
         plot = Enrichment(analysis_object)
         
-    plot.run(kwargs['output_filename'])
+    return plot.run(kwargs['output_filename'])
 
 class AnalysisFactory:
     """Builds analysis objects"""
