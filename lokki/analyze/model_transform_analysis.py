@@ -5,8 +5,9 @@ from sklearn.model_selection import StratifiedKFold
 # Notes: Should run data through each grid transform and then the model and return the top performance 
 class ModelTransformAnalysis:
     
-    def __init__(self, transform_instance, model_instance, parameters):
-
+    def __init__(self, process_instance, transform_instance, model_instance, parameters):
+    
+        self.process_instance = process_instance
         self.transform_instance = transform_instance
         self.model_instance = model_instance
         self.parameters = parameters
@@ -44,6 +45,11 @@ class ModelTransformAnalysis:
                         X_train, X_test = X.iloc[train_index,:], X.iloc[test_index,:]
                         y_train, y_test = y[train_index], y[test_index]
 
+                        # Preprocessing step 
+                        self.process_instance.fit(X_train, y_train)
+                        X_train = self.process_instance.transform(X_train, y_train)
+                        X_test  = self.process_instance.transform(X_test, y_test)
+
                         # Prepare training data
                         self.transform_instance.fit(grid, X_train, y_train)
 
@@ -74,7 +80,13 @@ class ModelTransformAnalysis:
 
                     X_train, X_test = X.iloc[train_index,:], X.iloc[test_index,:]
                     y_train, y_test = y[train_index], y[test_index]
+                        
+                    # Preprocessing step 
+                    self.process_instance.fit(X_train, y_train)
+                    X_train = self.process_instance.transform(X_train, y_train)
+                    X_test  = self.process_instance.transform(X_test, y_test)
 
+                    # Prepare training data
                     self.transform_instance.fit('', X_train, y_train)
 
                     transformed_X_train = self.transform_instance.transform(X_train, y_train)

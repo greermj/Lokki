@@ -18,6 +18,11 @@ from lokki.model import ExtraTree
 from lokki.model import LDA
 from lokki.model import QDA
 
+# Preprocessing
+from lokki.process import NoPreprocessing 
+from lokki.process import Log 
+from lokki.process import ZScore
+
 # Tranforms 
 from lokki.transform import FactorAnalysis
 from lokki.transform import ICA
@@ -33,7 +38,7 @@ from lokki.visualize import Stacked
 from lokki.visualize import Enrichment 
 
 def configure(**kwargs):
-    return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
+    return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['pre_processing'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
 
 def custom(**kwargs):
 
@@ -64,7 +69,7 @@ def plot(**kwargs):
 class AnalysisFactory:
     """Builds analysis objects"""
 
-    def __init__(self, dataset, target_name, transforms, models, metric):
+    def __init__(self, dataset, target_name, pre_processing, transforms, models, metric):
         """AnalysisFactory init
 
         :param dataset: pandas dataframe containing data to analyze 
@@ -81,10 +86,22 @@ class AnalysisFactory:
 
         self.analysis_runs = []
 
-        for transform, model in list(product(transforms, models)):
+        for process, transform, model in list(product(pre_processing, transforms, models)):
+            #print(process + '\t' + transform + '\t' + model)
 
+            analysis_process = None
             analysis_transform = None
             analysis_model = None
+    
+            # Preprocessing Strategy 
+            if process.lower() == 'none':
+                analysis_process = NoPreprocessing()
+            elif process.lower() == 'log':
+                analysis_process = Log()
+            elif process.lower() == 'zscore':
+                analysis_process = ZScore()
+            else:
+                print('Error: Preprocessing method not found')
 
             # Feature Engineering Strategies 
             if transform.lower() == 'factor':
@@ -130,17 +147,18 @@ class AnalysisFactory:
             else:
                 print('Error: Model method not found')
 
-            self.analysis_runs.append(ModelTransformAnalysis(analysis_transform, analysis_model, self.parameters))
+            self.analysis_runs.append(ModelTransformAnalysis(analysis_process, analysis_transform, analysis_model, self.parameters))
 
     def run(self):
 
         self.results = []
         
         for i, analysis in enumerate(self.analysis_runs):
+            current_process   = '_'.join(analysis.process_instance.get_name().lower().split(' '))
             current_transform = '_'.join(analysis.transform_instance.get_name().lower().split(' '))
             current_model     = '_'.join(analysis.model_instance.get_name().lower().split(' '))
-            print('Analyzing: ' + current_transform + '_' + current_model)
-            self.results.append({'key'   : (current_transform.strip().lower(), current_model.strip().lower()), 
+            print('Analyzing: ' + current_process + '_' + current_transform + '_' + current_model)
+            self.results.append({'key'   : (current_process.strip().lower(), current_transform.strip().lower(), current_model.strip().lower()), 
                                  'value' : analysis.get_performance(self.dataset)})
 
         return AnalysisObject(self.results, self.parameters['metric'])
