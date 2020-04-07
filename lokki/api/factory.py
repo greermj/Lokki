@@ -36,6 +36,7 @@ from lokki.transform import Void
 # Visualizations 
 from lokki.visualize import Stacked 
 from lokki.visualize import Enrichment 
+from lokki.visualize import Hybrid 
 
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['pre_processing'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
@@ -63,7 +64,9 @@ def plot(**kwargs):
         plot = Stacked(analysis_object)
     if kwargs['plot_type'].lower() == 'enrichment':
         plot = Enrichment(analysis_object)
-        
+    if kwargs['plot_type'].lower() == 'hybrid':
+        plot = Hybrid(analysis_object)
+
     return plot.run(kwargs['output_filename'])
 
 class AnalysisFactory:
@@ -87,7 +90,6 @@ class AnalysisFactory:
         self.analysis_runs = []
 
         for process, transform, model in list(product(pre_processing, transforms, models)):
-            #print(process + '\t' + transform + '\t' + model)
 
             analysis_process = None
             analysis_transform = None
