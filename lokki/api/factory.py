@@ -31,6 +31,7 @@ from lokki.transform import PCA
 
 from lokki.transform import ChiSquare
 from lokki.transform import MutualInformation
+from lokki.transform import HFE
 from lokki.transform import Void
 
 # Visualizations 
@@ -39,7 +40,7 @@ from lokki.visualize import Enrichment
 from lokki.visualize import Hybrid 
 
 def configure(**kwargs):
-    return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['pre_processing'], kwargs['transforms'], kwargs['models'], kwargs['metric'])
+    return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['pre_processing'], kwargs['transforms'], kwargs['models'], kwargs['metric'], kwargs['taxonomy'] if 'taxonomy' in kwargs else None)
 
 def custom(**kwargs):
 
@@ -72,7 +73,7 @@ def plot(**kwargs):
 class AnalysisFactory:
     """Builds analysis objects"""
 
-    def __init__(self, dataset, target_name, pre_processing, transforms, models, metric):
+    def __init__(self, dataset, target_name, pre_processing, transforms, models, metric, taxonomy):
         """AnalysisFactory init
 
         :param dataset: pandas dataframe containing data to analyze 
@@ -84,6 +85,7 @@ class AnalysisFactory:
 
         self.dataset = dataset
         self.dataset_shape = dataset.shape
+        self.taxonomy = taxonomy
         self.model_transform_tuples = list(product(transforms, models))
         self.parameters  = {'target_name' : target_name, 'metric' : metric, 'num_iterations' : 5, 'num_folds' : 5}
 
@@ -122,6 +124,8 @@ class AnalysisFactory:
                 analysis_transform = ChiSquare(self.dataset_shape)
             elif transform.lower() == 'mutual_information':
                 analysis_transform = MutualInformation(self.dataset_shape)
+            elif transform.lower() == 'hfe':
+                analysis_transform = HFE(self.dataset_shape, self.taxonomy)
             else:
                 print('Error: Transform method not found')
 
