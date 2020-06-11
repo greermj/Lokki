@@ -14,10 +14,9 @@ class ZScore(PreProcessingChoice):
         self.zscore = StandardScaler().fit(X)
 
     def transform(self, X, y):
-        data = pd.DataFrame(self.zscore.transform(X))
+        data = pd.DataFrame(self.zscore.transform(X), columns = X.columns.values)
         data[data > 3] = 3
         data[data <= -3] = -3
-
         return data.values + 3
 
     def get_name(self):
