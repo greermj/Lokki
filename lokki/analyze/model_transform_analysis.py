@@ -15,8 +15,8 @@ class ModelTransformAnalysis:
     def get_performance(self, dataset):
 
         # The dataset 
-        X = dataset.drop(self.parameters['target_name'], axis = 1).copy().reset_index(drop = True)
-        y = dataset[self.parameters['target_name']].copy().reset_index(drop = True)
+        X = dataset.loc[:, [x.lower().startswith('otu') for x in dataset.columns.values]].copy().reset_index(drop = True)
+        y = dataset.loc[:, [x.lower().startswith('target') for x in dataset.columns.values]].copy().reset_index(drop = True).iloc[:,0].values
 
         # Final result returned; it is a list of means over the CV folds 
         iteration_performance_results = []
