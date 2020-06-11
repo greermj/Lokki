@@ -70,14 +70,14 @@ class Hybrid:
         sorted_results  = [sorted(results.items(), key = lambda x : x[1]['ks_stat'], reverse = True), sorted(results.items(), key = lambda x : x[1]['ks_stat'])]
 
 
-        fig, ax = plt.subplots(nrows = 10, ncols = 1,figsize=(10,20), gridspec_kw={'height_ratios': [3,1,1,1,1,1,1,1,1,1]})
+        fig, ax = plt.subplots(nrows = 6, ncols = 1,figsize=(10,20), gridspec_kw={'height_ratios': [4,1,1,1,1,1]})
 
         ax[0].set_xlim(0, len(sorted_values) - 1)
         ax[0].bar(y_pos, sorted_values, width = 1)
         ax[0].set_xticks([])
         ax[0].set_ylabel(self.analysis_object.scoring_metric_name)
 
-        for i in range(1, 10):
+        for i in range(1, 6):
 
             key     = sorted_results[0][i][0]
             values  = sorted_results[0][i][1]
@@ -87,8 +87,8 @@ class Hybrid:
             ax[i].bar(range(0, len(values['bars'])), values['bars'], width = 1, color = 'k')
             ax[i].set_xticks([])
             ax[i].set_yticks([])
-            ax[i].set_title('p-value: ' + str(round(values['p_value'], 4)) + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 10)
-            ax[i].set_ylabel(values['name'] if isinstance(values['name'], str) else '\n'.join(values['name']))
+            ax[i].set_title('p-value: ' + str(round(values['p_value'], 4)) + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 10,  fontweight='bold')
+            ax[i].set_ylabel(values['name'] if isinstance(values['name'], str) else '\n'.join(values['name']),  fontweight='bold')
 
         fig.tight_layout(pad = 2)
         plt.style.use('seaborn-darkgrid')

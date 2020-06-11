@@ -23,14 +23,12 @@ class Enrichment:
 
         # Add single dimension data 
         for dimension in dimensions:
-            #print(dimension)
             enrichment_bars = []
             for data in ranked_data:
                 if dimension in data['key']:
                     enrichment_bars.append(1)
                 else:
                     enrichment_bars.append(0)
-            #print(enrichment_bars)
 
             enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
             all_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
@@ -43,11 +41,9 @@ class Enrichment:
         for i in range(2, self.max_combn + 1):
 
             for combination in combinations(dimensions, i):
-                #print(combination)
                 enrichment_bars = results[combination[0]]['bars']
                 for j in range(len(combination)):
                     enrichment_bars = list(np.array(enrichment_bars) & np.array(results[combination[j]]['bars'])) 
-                #print(enrichment_bars)
 
                 enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
                 all_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
@@ -59,12 +55,25 @@ class Enrichment:
         # Sort then output (First by p-value, then by decreasing number of bars (ie reciprocal of length))
         sorted_results  = [sorted(results.items(), key = lambda x : x[1]['ks_stat'], reverse = True), sorted(results.items(), key = lambda x : x[1]['ks_stat'])]
 
+        ##
+        #a = [x for x in sorted_results[0] if 'nmf' in x[0]]
+        #b = [x for x in sorted_results[1] if 'nmf' in x[0] and x[1]['ks_stat'] < 0]
+
+        #sorted_results = [a, b]
+        ##
+
         fig, ax = plt.subplots(nrows = 10, ncols = 2,figsize=(20,20))
 
-        print(ax.shape)
+        #print(ax.shape)
 
         for i in range(10):
             for j in range(2):
+            
+                ##
+                if i >= len(sorted_results[j]):
+                    ax[i][j].axis('off')
+                    continue 
+                ##
 
                 key     = sorted_results[j][i][0]
                 values  = sorted_results[j][i][1]
@@ -74,8 +83,13 @@ class Enrichment:
                 ax[i][j].bar(range(0, len(values['bars'])), values['bars'], width = 1, color = 'k')
                 ax[i][j].set_xticks([])
                 ax[i][j].set_yticks([]) 
-                ax[i][j].set_title('p-value: ' + str(round(values['p_value'], 4)) + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 10)
-                ax[i][j].set_ylabel(values['name'] if isinstance(values['name'], str) else '\n'.join(values['name']))
+                ax[i][j].set_title('p-value: ' + str(round(values['p_value'], 4)) + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 12,  fontweight='bold')
+                y_label = values['name'] if isinstance(values['name'], str) else '\n'.join(values['name'])
+                ##
+                y_label = y_label.replace('linear_discriminant_analysis', 'LDA')
+                y_label = y_label.replace('quadratic_discriminant_analysis', 'QDA')
+                ##
+                ax[i][j].set_ylabel(y_label, fontweight='bold', fontsize=12)
 
         fig.tight_layout(pad = 2)
         plt.savefig('hal.png')
