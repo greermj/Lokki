@@ -7,4 +7,5 @@ from .feature_engineering import NMF
 
 from .feature_selection import ChiSquare
 from .feature_selection import MutualInformation
+from .feature_selection import HFE
 from .feature_selection import Void
