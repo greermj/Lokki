@@ -33,8 +33,12 @@ class Enrichment:
             enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
             all_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
             ks_sign          = 1 if np.mean(enrichment_ranks) < np.median(all_ranks) else -1
-            
-            ks_stat, p_value = ks_2samp(enrichment_ranks, all_ranks) if not enrichment_ranks == [] else (0, 1) 
+
+            print(enrichment_ranks)
+            print(all_ranks)
+
+            # If enrichment_ranks or all_ranks are empty use the scipy method 
+            ks_stat, p_value = ks_2samp(enrichment_ranks, all_ranks) if enrichment_ranks and all_ranks else (0, 1) 
             results[dimension] = {'name' : dimension, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
         # Add combination dimension data
@@ -49,7 +53,7 @@ class Enrichment:
                 all_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
                 ks_sign          = 1 if np.mean(enrichment_ranks) < np.median(all_ranks) else -1
 
-                ks_stat, p_value = ks_2samp(enrichment_ranks, all_ranks) if not enrichment_ranks == [] else (0, 1) 
+                ks_stat, p_value = ks_2samp(enrichment_ranks, all_ranks) if enrichment_ranks and all_ranks else (0, 1) 
                 results[combination] = {'name' : combination, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
         # Sort then output (First by p-value, then by decreasing number of bars (ie reciprocal of length))
