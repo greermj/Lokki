@@ -1,9 +1,9 @@
 import numpy as np
 import sklearn as sk
 
-from lokki.transform import TransformChoice
+from lokki.feature_transform import FeatureTransformChoice
 
-class ICA(TransformChoice):
+class ICA(FeatureTransformChoice):
 
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape

@@ -3,7 +3,7 @@ import pandas as pd
 
 from abc import ABCMeta, abstractmethod
 
-class TransformChoice(object, metaclass = ABCMeta):
+class FeatureTransformChoice(object, metaclass = ABCMeta):
 
     def __init__(self, dataset_shape):
         pass

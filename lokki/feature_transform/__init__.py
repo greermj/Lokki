@@ -1,4 +1,4 @@
-from .transform_choice import TransformChoice
+from .feature_transform_choice import FeatureTransformChoice
 
 from .feature_engineering import PCA
 from .feature_engineering import ICA

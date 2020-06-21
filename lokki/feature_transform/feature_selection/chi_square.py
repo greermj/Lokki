@@ -2,9 +2,9 @@ import numpy as np
 
 from sklearn.feature_selection import SelectKBest, chi2
 
-from lokki.transform import TransformChoice
+from lokki.feature_transform import FeatureTransformChoice
 
-class ChiSquare(TransformChoice):
+class ChiSquare(FeatureTransformChoice):
 
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape

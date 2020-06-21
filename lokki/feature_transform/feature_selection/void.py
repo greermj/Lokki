@@ -1,6 +1,6 @@
-from lokki.transform import TransformChoice
+from lokki.feature_transform import FeatureTransformChoice
 
-class Void(TransformChoice):
+class Void(FeatureTransformChoice):
 
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape
