@@ -1,4 +1,4 @@
-from .pre_processing_choice import PreProcessingChoice
+from .data_transformation_choice import DataTransformationChoice
 
 from .log    import Log
 from .void   import NoPreprocessing

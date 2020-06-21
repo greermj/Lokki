@@ -3,9 +3,9 @@ import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 
-from lokki.process import PreProcessingChoice
+from lokki.data_transform import DataTransformationChoice
 
-class ZScore(PreProcessingChoice):
+class ZScore(DataTransformationChoice):
 
     def __init__(self):
         pass

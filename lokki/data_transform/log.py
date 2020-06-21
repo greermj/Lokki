@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import sklearn as sk
 
-from lokki.process import PreProcessingChoice
+from lokki.data_transform import DataTransformationChoice
 
-class Log(PreProcessingChoice):
+class Log(DataTransformationChoice):
 
     def __init__(self):
         pass

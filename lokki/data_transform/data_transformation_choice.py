@@ -3,7 +3,7 @@ import pandas as pd
 
 from abc import ABCMeta, abstractmethod
 
-class PreProcessingChoice(object, metaclass = ABCMeta):
+class DataTransformationChoice(object, metaclass = ABCMeta):
 
     def __init__(self):
         pass

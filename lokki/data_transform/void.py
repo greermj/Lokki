@@ -1,6 +1,6 @@
-from lokki.process import PreProcessingChoice
+from lokki.data_transform import DataTransformationChoice
 
-class NoPreprocessing(PreProcessingChoice):
+class NoPreprocessing(DataTransformationChoice):
 
     def __init__(self):
         pass
