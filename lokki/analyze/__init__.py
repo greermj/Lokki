@@ -1,3 +1,2 @@
 from .model_transform_analysis import ModelTransformAnalysis 
-from .model_transform_sets import ModelTransformSets
 from .analysis_object import AnalysisObject
