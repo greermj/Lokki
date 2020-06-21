@@ -2,7 +2,7 @@ from . import analyze
 from . import api
 from . import model
 from . import data_transform
-from . import transform
+from . import feature_transform
 from . import visualize
 from . import lib
 

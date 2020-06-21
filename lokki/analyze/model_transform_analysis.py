@@ -5,10 +5,10 @@ from sklearn.model_selection import StratifiedKFold
 # Notes: Should run data through each grid transform and then the model and return the top performance 
 class ModelTransformAnalysis:
     
-    def __init__(self, process_instance, transform_instance, model_instance, parameters):
+    def __init__(self, data_transform_instance, feature_transform_instance, model_instance, parameters):
     
-        self.process_instance = process_instance
-        self.transform_instance = transform_instance
+        self.data_transform_instance = data_transform_instance
+        self.feature_transform_instance = feature_transform_instance
         self.model_instance = model_instance
         self.parameters = parameters
 
@@ -22,7 +22,7 @@ class ModelTransformAnalysis:
         iteration_performance_results = []
 
         # Transform hyperparameter options
-        hyperparameter_grid = self.transform_instance.hyperparameter_grid()
+        hyperparameter_grid = self.feature_transform_instance.hyperparameter_grid()
 
         # For each iteration of the nested CV
         for i, iteration in enumerate(range(self.parameters['num_iterations'])):
@@ -33,7 +33,7 @@ class ModelTransformAnalysis:
                 optimal_score = 0
 
                 # Determine which transform hyperparameter has the highest OOS performance using CV 
-                for j, grid in enumerate(self.transform_instance.hyperparameter_grid()):
+                for j, grid in enumerate(self.feature_transform_instance.hyperparameter_grid()):
 
                     skf = StratifiedKFold(random_state = 2*i + j + 1 , n_splits = self.parameters['num_folds'])
 
@@ -46,15 +46,15 @@ class ModelTransformAnalysis:
                         y_train, y_test = y[train_index], y[test_index]
 
                         # Preprocessing step 
-                        self.process_instance.fit(X_train, y_train)
-                        X_train = self.process_instance.transform(X_train, y_train)
-                        X_test  = self.process_instance.transform(X_test, y_test)
+                        self.data_transform_instance.fit(X_train, y_train)
+                        X_train = self.data_transform_instance.transform(X_train, y_train)
+                        X_test  = self.data_transform_instance.transform(X_test, y_test)
 
                         # Prepare training data
-                        self.transform_instance.fit(grid, X_train, y_train)
+                        self.feature_transform_instance.fit(grid, X_train, y_train)
 
-                        transformed_X_train = self.transform_instance.transform(X_train, y_train)
-                        transformed_X_test = self.transform_instance.transform(X_test, y_test)
+                        transformed_X_train = self.feature_transform_instance.transform(X_train, y_train)
+                        transformed_X_test = self.feature_transform_instance.transform(X_test, y_test)
 
                         # Get performance 
                         performance = self.model_instance.evaluate(self.parameters, transformed_X_train, transformed_X_test, y_train, y_test)
@@ -82,15 +82,15 @@ class ModelTransformAnalysis:
                     y_train, y_test = y[train_index], y[test_index]
                         
                     # Preprocessing step 
-                    self.process_instance.fit(X_train, y_train)
-                    X_train = self.process_instance.transform(X_train, y_train)
-                    X_test  = self.process_instance.transform(X_test, y_test)
+                    self.data_transform_instance.fit(X_train, y_train)
+                    X_train = self.data_transform_instance.transform(X_train, y_train)
+                    X_test  = self.data_transform_instance.transform(X_test, y_test)
 
                     # Prepare training data
-                    self.transform_instance.fit('', X_train, y_train)
+                    self.feature_transform_instance.fit('', X_train, y_train)
 
-                    transformed_X_train = self.transform_instance.transform(X_train, y_train)
-                    transformed_X_test = self.transform_instance.transform(X_test, y_test)
+                    transformed_X_train = self.feature_transform_instance.transform(X_train, y_train)
+                    transformed_X_test = self.feature_transform_instance.transform(X_test, y_test)
 
                     performance = self.model_instance.evaluate(self.parameters, transformed_X_train, transformed_X_test, y_train, y_test)
 
