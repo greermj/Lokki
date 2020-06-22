@@ -17,7 +17,7 @@ class ZScore(DataTransformationChoice):
         data = pd.DataFrame(self.zscore.transform(X), columns = X.columns.values)
         data[data > 3] = 3
         data[data <= -3] = -3
-        return data.values + 3
+        return (data + 3).copy()
 
     def get_name(self):
         return 'ZScore_Preprocessing'
