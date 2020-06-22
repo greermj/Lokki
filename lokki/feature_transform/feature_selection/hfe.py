@@ -19,7 +19,6 @@ class HFE(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
 
         # Initialize new tree
-        print('new tree')
         self.tree = Tree()
 
         if isinstance(self.taxonomy, type(None)):
@@ -65,7 +64,7 @@ class HFE(FeatureTransformChoice):
         taxonomic_levels = taxonomic_string.split(';')
 
         feature_vector   = otu_table.loc[:,otu_name].values.copy()
-        print(taxonomic_levels)
+        
         for i, level in enumerate(taxonomic_levels):
 
             # Some of the levels might be empty if there an extra ; in the taxonomy file or two back to back. These should be skipped
@@ -73,16 +72,8 @@ class HFE(FeatureTransformChoice):
                 continue
 
             if tree.contains(level):
-
                 # Increment node OTU vector with argument OTU vector (ie node vector + new otu vector)
-                print('feature vector')
-                print(feature_vector)
-                print('\nbefore')
-                print(tree[level].data['feature_vector'])
-                print('\nafter')
                 tree[level].data['feature_vector'] += feature_vector.copy()
-                print(tree[level].data['feature_vector'])
-                print('\n\n')
 
             else:
 
@@ -173,6 +164,3 @@ class HFE(FeatureTransformChoice):
 
             if incomplete_path(path) and ((leaf_node_IG == 0) or (leaf_node_IG < avg_tree_IG)):
                 self.tree[path[-1]].data['valid'] = False
-
-
-
