@@ -32,4 +32,4 @@ class QDA(ModelChoice):
         return score
 
     def get_name(self):
-        return 'Quadratic_Discriminant_Analysis'
+        return 'QDA'

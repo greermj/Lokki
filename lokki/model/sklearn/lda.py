@@ -32,4 +32,4 @@ class LDA(ModelChoice):
         return score
 
     def get_name(self):
-        return 'Linear_Discriminant_Analysis'
+        return 'LDA'
