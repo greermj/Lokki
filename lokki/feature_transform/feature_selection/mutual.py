@@ -9,7 +9,7 @@ class MutualInformation(FeatureTransformChoice):
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape
         self.step_size = int(dataset_shape[1] * 0.20)
-        self.grid = [{'k' : x} for x in np.arange(dataset_shape[1] - 1, step = self.step_size) + 1]
+        self.grid = [{'k' : x} for x in np.arange(1, dataset_shape[1] - 1, step = self.step_size)]
 
     def fit(self, hyperparameters, X, y):
         self.mutual = SelectKBest(mutual_info_classif, **hyperparameters).fit(X,y)
