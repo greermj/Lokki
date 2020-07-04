@@ -20,7 +20,7 @@ class ZScore(DataTransformationChoice):
         return (data + 3).copy()
 
     def get_name(self):
-        return 'ZScore_Preprocessing'
+        return 'ZScore'
 
     def hyperparameter_grid(self):
         return self.grid

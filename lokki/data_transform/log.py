@@ -16,7 +16,7 @@ class Log(DataTransformationChoice):
         return pd.DataFrame(np.log(X.values + 1), columns = X.columns.values)
 
     def get_name(self):
-        return 'Log_Preprocessing'
+        return 'Log'
 
     def hyperparameter_grid(self):
         return self.grid
