@@ -10,8 +10,8 @@ import lokki
 #                       scoring_metric_name = 'AUROC')
 
 #results = pickle.load(open('./dev/microbiome_results/ahn_ctrl_tmr.p', 'rb'))
-results = pickle.load(open('./test_neo.p', 'rb'))
+results = pickle.load(open('./baxter_tumor_results.p', 'rb'))
 
 lokki.plot(analysis_object = results,
-           plot_type = 'stacked',
-           output_filename = 'out.png')
+           plot_type = 'performance',
+           output = 'distribution.png')

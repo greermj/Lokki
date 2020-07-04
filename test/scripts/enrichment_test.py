@@ -14,14 +14,13 @@ results = lokki.custom(dataset = data,
 '''
 
 #results = pickle.load(open('./dev/microbiome_results/ahn_ctrl_tmr.p', 'rb'))
-results = pickle.load(open('./dev/zeller_test_neo.p', 'rb'))
-#results = pickle.load(open('./dev/neo.p', 'rb'))
+results = pickle.load(open('./baxter_tumor_results.p', 'rb'))
+#results = pickle.load(open('./dev/zeller_neos/zeller_adenoma_results.p', 'rb'))
 
 lokki.plot(analysis_object = results,
            plot_type = 'enrichment',
-           filters = ['none', 'chi_square', 'mutual_information'],
+           #filters = ['gradient_boosting'],
            mode = 'single',
-           min_hits = 3,
-           max_combn = 1,
-           output_filename = 'e_out.png')
-
+           min_hits = 5,
+           max_combn = 2,
+           output = 'out_test.png')

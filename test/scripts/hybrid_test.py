@@ -15,5 +15,6 @@ results = lokki.custom(dataset = data,
 
 lokki.plot(analysis_object = results,
            plot_type = 'hybrid',
-           output_filename = 'out.png')
+           min_hits = 2,
+           output = 'u.png')
 
