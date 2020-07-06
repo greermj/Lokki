@@ -12,7 +12,7 @@ class NoPreprocessing(DataTransformationChoice):
         return X
 
     def get_name(self):
-        return 'None'
+        return 'No_Data_Transform'
 
     def hyperparameter_grid(self):
         return None

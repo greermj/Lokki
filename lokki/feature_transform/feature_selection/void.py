@@ -12,7 +12,7 @@ class Void(FeatureTransformChoice):
         return X
 
     def get_name(self):
-        return 'None'
+        return 'No_Feature_Transform'
 
     def hyperparameter_grid(self):
         return None
