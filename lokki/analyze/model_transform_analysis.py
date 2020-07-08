@@ -35,7 +35,7 @@ class ModelTransformAnalysis:
                 # Determine which transform hyperparameter has the highest OOS performance using CV 
                 for j, grid in enumerate(self.feature_transform_instance.hyperparameter_grid()):
 
-                    skf = StratifiedKFold(random_state = 2*i + j + 1 , n_splits = self.parameters['num_folds'])
+                    skf = StratifiedKFold(random_state = 2*i + j + 1 , n_splits = self.parameters['num_folds'], shuffle=True)
 
                     fold_results = []
                 
@@ -70,7 +70,7 @@ class ModelTransformAnalysis:
             else:
 
                 # Perform same analysis above only without grid searching of transform hyperparameters 
-                skf = StratifiedKFold(random_state = i, n_splits = self.parameters['num_folds'])
+                skf = StratifiedKFold(random_state = i, n_splits = self.parameters['num_folds'], shuffle=True)
 
                 fold_results = []
 
