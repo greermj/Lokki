@@ -4,6 +4,7 @@ from lokki.analyze import ModelTransformAnalysis
 from lokki.analyze import AnalysisObject
 
 from lokki.lib import PipelineComponents 
+from lokki.selection import ModelSelection 
 
 # Visualizations 
 from lokki.visualize import Stacked 
@@ -27,7 +28,7 @@ def custom(**kwargs):
     return AnalysisObject(results, scoring_metric_name)
 
 def select(**kwargs):
-    return 
+    return ModelSelection(kwargs['dataset'], kwargs['taxonomy'], kwargs['mode'], kwargs['k'], kwargs['analysis_object'])
 
 def plot(**kwargs):
 
@@ -45,17 +46,8 @@ def plot(**kwargs):
     return plot.run()
 
 class AnalysisFactory:
-    """Builds analysis objects"""
 
     def __init__(self, dataset, target_name, data_transforms, feature_transforms, models, metric, taxonomy):
-        """AnalysisFactory init
-
-        :param dataset: pandas dataframe containing data to analyze 
-        :param target_name: target name that is present within the dataset
-        :param transforms: list of transforms to search 
-        :param models: list of models to search
-        :param metric: training metric (eg auc, precision, etc)
-        """
 
         self.dataset = dataset
         self.dataset_shape = dataset.shape
@@ -96,6 +88,7 @@ class AnalysisFactory:
             self.results.append({'key'   : (current_data_transform.strip().lower(), 
                                             current_feature_transform.strip().lower(), 
                                             current_model.strip().lower()), 
-                                 'value' : analysis.get_performance(self.dataset)})
+                                 'value' : analysis.get_performance(self.dataset),
+                                 'grid'  : analysis.grid})
 
         return AnalysisObject(self.results, self.parameters['metric'])
