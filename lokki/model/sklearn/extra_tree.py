@@ -13,6 +13,13 @@ class ExtraTree(ModelChoice):
     def __init__(self):
         pass
 
+    def fit(self, X, y):
+        self.model = ExtraTreeClassifier(max_depth = 10)
+        self.model.fit(X, y)
+
+    def predict(self, X):
+        return self.model.predict(X)
+
     def evaluate(self, parameters, X_train, X_test, y_train, y_test):
 
         model = ExtraTreeClassifier(max_depth = 10)

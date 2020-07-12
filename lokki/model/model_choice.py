@@ -9,6 +9,14 @@ class ModelChoice(object, metaclass = ABCMeta):
         pass
 
     @abstractmethod
+    def fit(self, X, y):
+        pass
+
+    @abstractmethod
+    def predict(self, X):
+        pass
+
+    @abstractmethod
     def evaluate(self, parameters, X_train, X_test, y_train, y_test):
         pass
 

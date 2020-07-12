@@ -13,6 +13,13 @@ class LogisticRegressionModel(ModelChoice):
     def __init__(self):
         pass
 
+    def fit(self, X, y):
+        self.model = LogisticRegression(solver='lbfgs', max_iter=10000)
+        self.model.fit(X, y)
+
+    def predict(self, X):
+        return self.model.predict(X)
+
     def evaluate(self, parameters, X_train, X_test, y_train, y_test):
 
         model = LogisticRegression(solver='lbfgs', max_iter=10000)
