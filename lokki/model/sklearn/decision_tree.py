@@ -14,7 +14,7 @@ class DecisionTree(ModelChoice):
         pass
 
     def fit(self, X, y):
-        self.model = DecisionTreeClassifier(max_depth = 10)()
+        self.model = DecisionTreeClassifier(max_depth = 10)
         self.model.fit(X, y)
 
     def predict(self, X):
