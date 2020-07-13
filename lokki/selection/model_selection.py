@@ -18,8 +18,7 @@ class ModelSelection:
                               key = lambda x : x['value'], 
                               reverse = True)
 
-        if self.results == []:
-            return
+        grid = None
 
         if self.mode.lower() == 'robust':
 
@@ -55,22 +54,51 @@ class ModelSelection:
                         if count == self.k:
                             robust_model = x
 
-            pipeline_build = (robust_data_transform, robust_feature_transform, robust_model)
+            if (robust_data_transform == None) or (robust_feature_transform == None) or (robust_model == None):
+                print('WARNING: Could not find robust pipeline components, selecting optimal choice. Try reducing the parameter k')
+                pipeline_build = self.results[0]['key']
+                grid = self.results[0]['grid']
+
+            else:
+                pipeline_build = (robust_data_transform, robust_feature_transform, robust_model)
+                grid = self._get_robust_grid(pipeline_build)
 
         else:
-
             # Return the highest scoring pipeline
             pipeline_build = self.results[0]['key']
+            grid = self.results[0]['grid']
 
-        # Retrieve components and train model 
-        analysis_data_transform    = self.pipeline_components.get_component( pipeline_build[0].lower(),    'data_transform')
-        analysis_feature_transform = self.pipeline_components.get_component( pipeline_build[1].lower(), 'feature_transform')
-        analysis_model             = self.pipeline_components.get_component( pipeline_build[2].lower(),             'model')
+        # Retrieve components 
+        self.analysis_data_transform    = self.pipeline_components.get_component( pipeline_build[0].lower(),    'data_transform')
+        self.analysis_feature_transform = self.pipeline_components.get_component( pipeline_build[1].lower(), 'feature_transform')
+        self.analysis_model             = self.pipeline_components.get_component( pipeline_build[2].lower(),             'model')
 
-        print(analysis_data_transform)
-        print(analysis_feature_transform)
-        print(analysis_model)
+        # Retrieve default hyperparameter grid
+        self.hyperparameter_grid = self.analysis_feature_transform.hyperparameter_grid()
 
+        # Split into data and targets 
+        X = self.dataset.loc[:, [x.lower().startswith('otu') for x in self.dataset.columns.values]].copy().reset_index(drop = True)
+        y = self.dataset.loc[:, [x.lower().startswith('target') for x in self.dataset.columns.values]].copy().reset_index(drop = True).iloc[:,0].values
+
+        # Apply any data transforms 
+        self.analysis_data_transform.fit(X, y)
+        X_train = self.analysis_data_transform.transform(X, y)
+
+        # Apply any feature transforms 
+        if grid == None:
+            self.analysis_feature_transform.fit(X_train, y)
+            X_train = self.analysis_feature_transform.transform(X_train, y)
+        else:
+            self.analysis_feature_transform.fit(grid, X_train, y)
+            X_train = self.analysis_feature_transform.transform(X_train, y)
+
+        # Train the model 
+
+        
+    def predict(self):
+        pass
+
+    # Description: Updates the count of the number of times the element was hit in the dictionary of counts
     def _update_count(self, elem, dict_counts):
         if not elem in dict_counts:
             dict_counts[elem] = 1
@@ -78,5 +106,10 @@ class ModelSelection:
             dict_counts[elem] += 1
         return dict_counts 
 
-    def predict(self):
-        pass
+    # Description: Finds the specific results data for the pipeline build (ie combination of data transform, feature transform and model) then returns the grid
+    def _get_robust_grid(self, pipeline_build):
+        for elem in self.results:
+            if pipeline_build == elem['key']:
+                return elem['grid']
+        print('WARNING: Could not find robust pipeline grid, selecting optimal choice')
+        return self.results[0]['grid']
