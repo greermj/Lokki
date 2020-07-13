@@ -8,3 +8,4 @@
 *xlsx
 dev/
 venv/
+*pyc
