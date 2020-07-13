@@ -63,6 +63,7 @@ class ModelTransformAnalysis:
         
                     if np.mean(fold_results) > optimal_score:
                         optimal_score = np.mean(fold_results)
+                        self.grid     = grid
 
                 # Store the mean 
                 iteration_performance_results.append(optimal_score)
@@ -98,6 +99,7 @@ class ModelTransformAnalysis:
     
                 if np.mean(fold_results) > optimal_score:
                     optimal_score = np.mean(fold_results)
+                    self.grid     = None
                 
                 iteration_performance_results.append(optimal_score)
         
