@@ -61,7 +61,7 @@ class PipelineComponents:
                 return MutualInformation(self.dataset_shape)
             elif name.lower() == 'hfe':
                 return HFE(self.dataset_shape, self.taxonomy)
-            elif name.lower() == 'factor':
+            elif name.lower() == 'factor_analysis':
                 return FactorAnalysis(self.dataset_shape)
             elif name.lower() == 'ica':
                 return ICA(self.dataset_shape)
@@ -85,7 +85,7 @@ class PipelineComponents:
                 return ExtraTree()
             if name.lower() == 'logistic_regression':
                 return LogisticRegressionModel()
-            if name.lower() == 'ridge':
+            if name.lower() == 'ridge_classifier':
                 return RidgeClassifierModel()
             if name.lower() == 'adaboost':
                 return AdaBoost()
@@ -95,4 +95,32 @@ class PipelineComponents:
                 return SVM()
             else:
                 sys.exit('ERROR: ' + ' Could not find model "' + name + '"')
+
+    # Description: Returns a dictionary mapping the name to the component type
+    def get_name_to_component_map(self):
+        return { NoPreprocessing.get_name('').lower()         : 'data_transform',
+                 Log.get_name('').lower()                     : 'data_transform',
+                 ZScore.get_name('').lower()                  : 'data_transform',
+
+                 Void.get_name('').lower()                    : 'feature_transform',
+                 ChiSquare.get_name('').lower()               : 'feature_transform',
+                 MutualInformation.get_name('').lower()       : 'feature_transform',
+                 HFE.get_name('').lower()                     : 'feature_transform',
+                 FactorAnalysis.get_name('').lower()          : 'feature_transform',
+                 ICA.get_name('').lower()                     : 'feature_transform',
+                 NMF.get_name('').lower()                     : 'feature_transform',
+                 PCA.get_name('').lower()                     : 'feature_transform',
+
+                 RandomForest.get_name('').lower()            : 'model',
+                 DecisionTree.get_name('').lower()            : 'model',
+                 LDA.get_name('').lower()                     : 'model',
+                 QDA.get_name('').lower()                     : 'model',
+                 ExtraTree.get_name('').lower()               : 'model',
+                 LogisticRegressionModel.get_name('').lower() : 'model',
+                 RidgeClassifierModel.get_name('').lower()    : 'model',
+                 AdaBoost.get_name('').lower()                : 'model',
+                 GradientBoosting.get_name('').lower()        : 'model',
+                 SVM.get_name('').lower()                     : 'model'}
+
+
 
