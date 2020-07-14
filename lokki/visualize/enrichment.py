@@ -2,12 +2,15 @@ import sys
 import os
 
 import numpy as np
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 
 from scipy import stats
 from itertools import combinations 
 from scipy.stats import ks_2samp
 import colorsys
+
+from lokki.lib import PipelineComponents
 
 
 # Description: Returns orthogonal colors 
@@ -56,6 +59,9 @@ class Enrichment:
             else:
                 count += 1
 
+        # Get mapping between component name and component type
+        self.component_name_to_type = PipelineComponents.get_name_to_component_map('')
+
     def run(self):
     
         results = dict() 
@@ -84,7 +90,7 @@ class Enrichment:
             enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
             other_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
 
-            # Heuristic to get a signed ks stat (ie in general, if the average es rank is less than most of the other ranks then this means the values are clustering to the left and the ks stat should be positive)
+            # If the ranks are in general less thna the other ranks then they cluster to the left and the sign of ks should be positive 
             ks_sign = np.nan
             if len(enrichment_ranks) != 0:
                 ks_sign          = 1 if np.mean(enrichment_ranks) < np.median(other_ranks) else -1
@@ -135,6 +141,21 @@ class Enrichment:
 
         scores = lowest_scores if self.order.lower() == 'asc' else highest_scores
 
+        # Loop through the plots to determine how many of each component exists. This is necessary to create a dynamic color mapping based on components 
+        for i, plot_data in enumerate(scores):
+            if isinstance(self.num, int) and i >= self.num:
+                break
+            key = plot_data[1]['name']
+            print(key)
+            if isinstance(key, tuple):
+                print([self.component_name_to_type[x] for x in key])
+            else:
+                print(self.component_name_to_type[key])
+            print()
+
+        print('hello')
+
+        '''
         # Create enrichment plot
         for i, plot_data in enumerate(scores):
 
@@ -147,16 +168,35 @@ class Enrichment:
             factor_colors = (color_map[x] for x in key) if isinstance(key, tuple) else (color_map[key],)
             values = plot_data[1]
             pvalue  = round(values['p_value'], 4)
+
             fig, ax = plt.subplots(1, figsize=(15, 2))
             ax.bar(range(0, len(values['bars'])), values['bars'], width = 1, color = 'k')
             ax.set_xlim(0, len(values['bars']))
             ax.set_ylim(0, 1)
             ax.set_xticks([])
             ax.set_yticks([])
-            plot_ylabel(ax, ('•',) * num_factors, factor_colors, size=80, weight='bold')
+
+            #plot_ylabel(ax, ('•',) * num_factors, factor_colors, size=80, weight='bold')
+            #plot_ylabel(ax, ('●',) * num_factors, factor_colors, size=50, weight='bold')
+            #plot_ylabel(ax, ('■',) * num_factors, factor_colors, size=50, weight='bold')
+            plot_ylabel(ax, ('▶',) * num_factors, factor_colors, size=50, weight='bold')
             ax.set_title('p-value: ' + str(pvalue if pvalue > 0.01 else '< 0.01') + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 12,  fontweight='bold')
             plt.savefig(self.output_directory + '/' + name.lower() + '.png')
-            plt.clf()
+            plt.close()
+
+        # Output legend
+        patches = []
+        plt.figure(figsize=(4,8))
+        for color_name, color_values in color_map.items():
+            #patches.append(mpatches.Patch(color = color_values, label = color_name))
+            patches.append(mpatches.Polygon([[0,0],[0,1],[1,0]], color = color_values, label = color_name))
+        plt.legend(handles=patches, loc='center')
+        plt.xticks([])
+        plt.yticks([])
+        plt.axis('off')
+        plt.savefig(self.output_directory + '/legend.png')
+        plt.clf()
+        '''
 
                
     def get_ranked_list(self):
