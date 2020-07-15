@@ -67,6 +67,7 @@ class Enrichment:
     
         results = dict() 
         ranked_data = self.get_ranked_list()
+        custom_data_flag = 'grid' in ranked_data[0] # Custom datasets will not have a grid parameter 
         ranked_values = [x['value'] for x in ranked_data]
         dimensions = sorted(list(set([x for y in ranked_data for x in y['key']])))
 
@@ -93,7 +94,6 @@ class Enrichment:
             # If enrichment_ranks and other_ranks are both not empty use the scipy method else return (0, 1) which is the worst ks stat a pvalue possible 
             ks_stat, p_value = ks_2samp(enrichment_ranks, other_ranks) if enrichment_ranks and other_ranks else (0, 1) 
 
-            # Store results as dictionary 
             results[dimension] = {'name' : dimension, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
         # If you are analyzing more than a single factor 
@@ -121,7 +121,6 @@ class Enrichment:
 
                 results[combination] = {'name' : combination, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
-        # Initial sort 
         highest_scores = sorted(results.items(), key = lambda x : x[1]['ks_stat'], reverse = True)
         lowest_scores = sorted(results.items(), key = lambda x : x[1]['ks_stat'])
 
@@ -135,6 +134,40 @@ class Enrichment:
         lowest_scores  = [x for x in lowest_scores  if sum(x[1]['bars']) >= self.min_hits]
 
         scores = lowest_scores if self.order.lower() == 'asc' else highest_scores
+
+
+        if custom_data_flag:
+            self.draw_de_novo_analysis_enrichment_plots(scores)
+        else:
+            self.draw_precomputed_analysis_enrichment_plots(scores)
+            
+
+    def draw_precomputed_analysis_enrichment_plots(self, scores):
+        # Create enrichment plot
+        for i, plot_data in enumerate(scores):
+
+            if isinstance(self.num, int) and i >= self.num:
+                break
+
+            key = plot_data[1]['name']
+            values = plot_data[1]
+            pvalue  = round(values['p_value'], 4)
+            name = '_'.join(key) if isinstance(key, tuple) else key
+            ylabel = '\n'.join(key) if isinstance(key, tuple) else key
+
+            fig, ax = plt.subplots(1, figsize=(15, 2))
+            ax.bar(range(0, len(values['bars'])), values['bars'], width = 1, color = 'k')
+            ax.set_xlim(0, len(values['bars']))
+            ax.set_ylim(0, 1)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_ylabel(ylabel)
+            ax.set_title('p-value: ' + str(pvalue if pvalue > 0.01 else '< 0.01') + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 12,  fontweight='bold')
+            plt.savefig(self.output_directory + '/' + name.lower() + '.png')
+            plt.close()
+
+
+    def draw_de_novo_analysis_enrichment_plots(self, scores):
 
         # Loop through the plots to determine how many of each component exists. This is necessary to create a dynamic color mapping based on components
         component_sets = {'data_transform' : set(), 'feature_transform' : set(), 'model' : set()}
