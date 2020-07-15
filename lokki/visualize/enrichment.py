@@ -27,7 +27,7 @@ def get_colors(number_of_colors):
 # Description: Adds a colored dot as a ylabel 
 def plot_ylabel(ax, list_of_strings, list_of_colors, **kw):
     from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
-    bbox_anchor = (-0.07, -0.12) if len(list_of_strings) == 2 else (-0.07, 0.25)
+    bbox_anchor = (-0.07, 0.05) if len(list_of_strings) == 2 else (-0.07, 0.25)
     boxes = [TextArea(text, textprops=dict(color=color, ha='left',va='bottom',rotation=90,**kw)) 
                  for text,color in zip(list_of_strings[::-1],list_of_colors) ]
     ybox = VPacker(children=boxes,align="center", pad=0, sep=0)
@@ -153,7 +153,6 @@ class Enrichment:
         # Generate the color map between the component type options and a set of orthogonal colors 
         color_map = self.get_loaded_color_map(component_sets)
 
-
         # Create enrichment plot
         for i, plot_data in enumerate(scores):
 
@@ -161,16 +160,10 @@ class Enrichment:
                 break
 
             key = plot_data[1]['name']
-            print(key)
-            print(self.get_label(key, color_map))
-            print('-'*50)
-
-            '''
-            num_factors = len(key) if isinstance(key, tuple) else 1
-
-            factor_colors = (color_map[x] for x in key) if isinstance(key, tuple) else (color_map[key],)
             values = plot_data[1]
             pvalue  = round(values['p_value'], 4)
+            name = '_'.join(key) if isinstance(key, tuple) else key
+            factor_labels, factor_colors = self.get_label(key, color_map)
 
             fig, ax = plt.subplots(1, figsize=(15, 2))
             ax.bar(range(0, len(values['bars'])), values['bars'], width = 1, color = 'k')
@@ -178,17 +171,11 @@ class Enrichment:
             ax.set_ylim(0, 1)
             ax.set_xticks([])
             ax.set_yticks([])
-
-            #plot_ylabel(ax, ('•',) * num_factors, factor_colors, size=80, weight='bold')
-            #plot_ylabel(ax, ('●',) * num_factors, factor_colors, size=50, weight='bold')
-            #plot_ylabel(ax, ('■',) * num_factors, factor_colors, size=50, weight='bold')
-            plot_ylabel(ax, ('▶',) * num_factors, factor_colors, size=50, weight='bold')
             ax.set_title('p-value: ' + str(pvalue if pvalue > 0.01 else '< 0.01') + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 12,  fontweight='bold')
 
-            name = '_'.join(key) if isinstance(key, tuple) else key
+            plot_ylabel(ax, factor_labels, factor_colors, size=50, weight='bold')
             plt.savefig(self.output_directory + '/' + name.lower() + '.png')
             plt.close()
-            '''
 
         # Output legend
         fig, ax = plt.subplots(nrows = len(color_map), ncols = 1, figsize = (4, 8))
