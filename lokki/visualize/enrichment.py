@@ -1,4 +1,5 @@
 import sys
+import colorsys
 import os
 
 import numpy as np
@@ -8,7 +9,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from itertools import combinations 
 from scipy.stats import ks_2samp
-import colorsys
+from matplotlib.lines import Line2D
 
 from lokki.lib import PipelineComponents
 
@@ -68,12 +69,6 @@ class Enrichment:
         ranked_data = self.get_ranked_list()
         ranked_values = [x['value'] for x in ranked_data]
         dimensions = sorted(list(set([x for y in ranked_data for x in y['key']])))
-
-        # Create list of orthogonal colors then associate a dimension with the rgb values 
-        color_options = get_colors(len(dimensions))
-        color_map = dict()
-        for i, x in enumerate(dimensions):
-            color_map[x] = color_options[i]
 
         # For each dimension string (e.g. "pca")
         for dimension in dimensions:
@@ -141,21 +136,24 @@ class Enrichment:
 
         scores = lowest_scores if self.order.lower() == 'asc' else highest_scores
 
-        # Loop through the plots to determine how many of each component exists. This is necessary to create a dynamic color mapping based on components 
+        # Loop through the plots to determine how many of each component exists. This is necessary to create a dynamic color mapping based on components
+        component_sets = {'data_transform' : set(), 'feature_transform' : set(), 'model' : set()}
         for i, plot_data in enumerate(scores):
             if isinstance(self.num, int) and i >= self.num:
                 break
             key = plot_data[1]['name']
-            print(key)
             if isinstance(key, tuple):
-                print([self.component_name_to_type[x] for x in key])
+                component_types = {x : self.component_name_to_type[x] for x in key}
+                for x, y in component_types.items():
+                    component_sets[y].add(x)
             else:
-                print(self.component_name_to_type[key])
-            print()
+                component_type = self.component_name_to_type[key]
+                component_sets[component_type].add(key)
+    
+        # Generate the color map between the component type options and a set of orthogonal colors 
+        color_map = self.get_loaded_color_map(component_sets)
 
-        print('hello')
 
-        '''
         # Create enrichment plot
         for i, plot_data in enumerate(scores):
 
@@ -163,8 +161,13 @@ class Enrichment:
                 break
 
             key = plot_data[1]['name']
-            name = '_'.join(key) if isinstance(key, tuple) else key
+            print(key)
+            print(self.get_label(key, color_map))
+            print('-'*50)
+
+            '''
             num_factors = len(key) if isinstance(key, tuple) else 1
+
             factor_colors = (color_map[x] for x in key) if isinstance(key, tuple) else (color_map[key],)
             values = plot_data[1]
             pvalue  = round(values['p_value'], 4)
@@ -181,23 +184,82 @@ class Enrichment:
             #plot_ylabel(ax, ('■',) * num_factors, factor_colors, size=50, weight='bold')
             plot_ylabel(ax, ('▶',) * num_factors, factor_colors, size=50, weight='bold')
             ax.set_title('p-value: ' + str(pvalue if pvalue > 0.01 else '< 0.01') + '    stat: ' + str(round(values['ks_stat'], 4)), loc = 'left', fontsize = 12,  fontweight='bold')
+
+            name = '_'.join(key) if isinstance(key, tuple) else key
             plt.savefig(self.output_directory + '/' + name.lower() + '.png')
             plt.close()
+            '''
 
         # Output legend
-        patches = []
-        plt.figure(figsize=(4,8))
-        for color_name, color_values in color_map.items():
-            #patches.append(mpatches.Patch(color = color_values, label = color_name))
-            patches.append(mpatches.Polygon([[0,0],[0,1],[1,0]], color = color_values, label = color_name))
-        plt.legend(handles=patches, loc='center')
-        plt.xticks([])
-        plt.yticks([])
-        plt.axis('off')
-        plt.savefig(self.output_directory + '/legend.png')
-        plt.clf()
-        '''
+        fig, ax = plt.subplots(nrows = len(color_map), ncols = 1, figsize = (4, 8))
 
-               
+        for i, (component_type, component_name_color_map) in enumerate(color_map.items()):
+
+            patches = []
+
+            if component_type == 'data_transform':
+                legend_shape = 'o'
+            elif component_type == 'feature_transform':
+                legend_shape = 's'
+            elif component_type == 'model':
+                legend_shape = '^'
+            else:
+                sys.exit("ERROR: Couldn't find component type check enrichment.py")
+        
+            for color_name, color_values in component_name_color_map.items():
+                patches.append(Line2D([0], [0], marker = legend_shape, color = 'w', label = color_name, markerfacecolor = color_values, markersize = 15))
+
+            ax[i].legend(handles = patches, loc='center')
+            ax[i].set_xticks([])
+            ax[i].set_yticks([])
+        
+        plt.savefig(self.output_directory + '/legend.png')
+        plt.close()
+
+    # Description: Returns shape and color for y label 
+    def get_label(self, key, color_map):
+        factor_labels, factor_colors = [], []
+
+        if isinstance(key, tuple):
+            for x in key:
+                component_type = self.component_name_to_type[x]
+                if component_type == 'data_transform':
+                    factor_labels.append('●')
+                elif component_type == 'feature_transform':
+                    factor_labels.append('■')
+                elif component_type == 'model':
+                    factor_labels.append('▶')
+                else:
+                    sys.exit("ERROR: Couldn't find label shape check enrichment.py (tuple)")
+                factor_colors.append(color_map[component_type][x])
+        else:
+            component_type = self.component_name_to_type[key]
+            if component_type == 'data_transform':
+                factor_labels.append('●')
+            elif component_type == 'feature_transform':
+                factor_labels.append('■')
+            elif component_type == 'model':
+                factor_labels.append('▶')
+            else:
+                sys.exit("ERROR: Couldn't find label shape check enrichment.py (string)")
+            factor_colors.append(color_map[component_type][key])
+
+        return tuple(factor_labels), tuple(factor_colors)
+
+    # Description: Return the following mapping: {component_type_1 : { name_1 : colors, name_2 : colors, ...} ...}
+    def get_loaded_color_map(self, component_sets):
+
+        color_map = dict()
+
+        for component_type, component_set in component_sets.items():
+            if not component_type in color_map:
+                color_map[component_type] = dict()
+            color_options = get_colors(len(component_set)) 
+            for i, x in enumerate(component_set):
+                color_map[component_type][x] = color_options[i]
+        
+        return color_map
+
+    # Description: Returns ranked list by key        
     def get_ranked_list(self):
         return sorted(self.analysis_object.results, key = lambda x : x['value'], reverse = True)
