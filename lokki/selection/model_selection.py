@@ -93,10 +93,10 @@ class ModelSelection:
             X_train = self.analysis_feature_transform.transform(X_train, y)
 
         # Train the model 
-
+        self.analysis_model.fit(X_train, y)
         
-    def predict(self):
-        pass
+    def predict(self, X):
+        return self.analysis_model.predict(X)
 
     # Description: Updates the count of the number of times the element was hit in the dictionary of counts
     def _update_count(self, elem, dict_counts):
