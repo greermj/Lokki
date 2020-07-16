@@ -1,6 +1,6 @@
 import numpy as np
-import sklearn as sk
 
+from sklearn.decomposition import PCA as sklearnPCA
 from lokki.feature_transform import FeatureTransformChoice
 
 class PCA(FeatureTransformChoice):
@@ -14,13 +14,11 @@ class PCA(FeatureTransformChoice):
 
         # PCA only works if the n_components is less than the min of the # of samples and # of columns 
         if hyperparameters['n_components'] < np.min(X.shape):
-
-            self.pca = sk.decomposition.PCA(**hyperparameters).fit(X)
+            self.pca = sklearnPCA(**hyperparameters).fit(X)
 
         else:
-
-        # Select the fewest number of features in all other cases 
-            self.pca = sk.decomposition.PCA(**self.grid[0]).fit(X)
+            # Select the fewest number of features in all other cases 
+            self.pca = sklearnPCA(**self.grid[0]).fit(X)
 
     def transform(self, X, y):
         return self.pca.transform(X)
