@@ -7,9 +7,8 @@ from lokki.lib import PipelineComponents
 from lokki.selection import ModelSelection 
 
 # Visualizations 
-from lokki.visualize import Stacked 
+from lokki.visualize import PerformanceDistribution
 from lokki.visualize import Enrichment 
-from lokki.visualize import Hybrid 
 
 def configure(**kwargs):
     return AnalysisFactory(kwargs['dataset'], kwargs['target_name'], kwargs['data_transforms'], kwargs['feature_transforms'], kwargs['models'], kwargs['metric'], kwargs['taxonomy'] if 'taxonomy' in kwargs else None)
@@ -37,11 +36,9 @@ def plot(**kwargs):
     plot = None
     
     if kwargs['plot_type'].lower() == 'performance':
-        plot = Stacked(analysis_object, kwargs)
+        plot = PerformanceDistribution(analysis_object, kwargs)
     if kwargs['plot_type'].lower() == 'enrichment':
         plot = Enrichment(analysis_object, kwargs)
-    if kwargs['plot_type'].lower() == 'hybrid':
-        plot = Hybrid(analysis_object, kwargs)
 
     return plot.run()
 
