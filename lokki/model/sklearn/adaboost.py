@@ -7,6 +7,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 
 from sklearn.model_selection import RandomizedSearchCV
+from skopt import BayesSearchCV
+from skopt.space import Integer
 
 from lokki.model import ModelChoice
 
@@ -24,13 +26,10 @@ class AdaBoost(ModelChoice):
 
     def evaluate(self, parameters, X_train, X_test, y_train, y_test):
 
-        #ada = AdaBoostClassifier(random_state = 0)
-        #distribution = {'n_estimators' : [10, 50, 100, 500, 1000, 5000]}
-
-        #model = RandomizedSearchCV(ada, distribution, random_state = 0, n_iter = 1)
-        #print(model)
-
-        model = AdaBoostClassifier()
+        ada = AdaBoostClassifier()
+        distribution = {'n_estimators' : Integer(10, 5000)}
+        model = BayesSearchCV(ada, distribution, random_state = 0, n_iter = 1, cv = 3, n_jobs = -1)
+        print(model)
         model.fit(X_train, y_train)
 
         score = None
