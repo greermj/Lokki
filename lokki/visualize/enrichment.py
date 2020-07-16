@@ -55,7 +55,7 @@ class Enrichment:
         while True:
             if not os.path.exists('./enrichment_figs/run_' + str(count) + '/'):
                 os.makedirs('./enrichment_figs/run_' + str(count))
-                self.output_directory = './enrichment_figs/run_' + str(count)
+                self.output_directory = './enrichment_figs/run_' + str(count) + '/'
                 break
             else:
                 count += 1
