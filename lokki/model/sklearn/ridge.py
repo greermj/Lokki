@@ -6,6 +6,9 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 
+from skopt import BayesSearchCV
+from skopt.space import Integer, Real, Categorical
+
 from lokki.model import ModelChoice
 
 class RidgeClassifierModel(ModelChoice):
@@ -14,16 +17,15 @@ class RidgeClassifierModel(ModelChoice):
         pass
 
     def fit(self, X, y):
-        self.model = RidgeClassifier(solver='auto', max_iter=10000)
-        self.model.fit(X, y)
+        self.model = self.get_model(X, y)
 
     def predict(self, X):
         return self.model.predict(X)
 
     def evaluate(self, parameters, X_train, X_test, y_train, y_test):
 
-        model = RidgeClassifier(solver='auto', max_iter=10000)
-        model.fit(X_train, y_train)
+        model = self.get_model(X_train, y_train)
+
         score = None
         pred = model.predict(X_test)
 
@@ -38,5 +40,12 @@ class RidgeClassifierModel(ModelChoice):
 
         return score
 
+    def get_model(self, X, y):
+        search_space = {'alpha'  : Real(0.01, 2),
+                        'tol' : Real(0.00001, 0.0001)}
+        model = BayesSearchCV(RidgeClassifier(random_state = 0, max_iter = 1000), search_space, random_state = 0, n_iter = 1, cv = 3, n_jobs = -1)
+        model.fit(X, y)
+        return model
+
     def get_name(self):
-        return 'Ridge Classifier'
+        return 'Ridge Regression'
