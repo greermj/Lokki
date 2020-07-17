@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings('ignore')
+
 from itertools import product 
 
 from lokki.analyze import ModelTransformAnalysis 
