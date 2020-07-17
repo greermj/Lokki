@@ -45,7 +45,7 @@ class LogisticRegressionModel(ModelChoice):
                         'C' : Real(0.05, 3),
                         'solver' : Categorical(['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']),
                         'tol' : Real(0.00001, 0.0001)}
-        model = BayesSearchCV(LogisticRegression(random_state = 0, max_iter = 1000), search_space, random_state = 0, n_iter = 1, cv = 3, n_jobs = -1)
+        model = BayesSearchCV(LogisticRegression(random_state = 0, max_iter = 10000), search_space, random_state = 0, n_iter = 1, cv = 3, n_jobs = -1)
         model.fit(X, y)
         return model
 
