@@ -34,9 +34,10 @@ from lokki.feature_transform import Void
 
 class PipelineComponents:
 
-    def __init__(self, dataset_shape, taxonomy = None):
+    def __init__(self, dataset_shape, parameters, taxonomy = None):
 
         self.dataset_shape = dataset_shape
+        self.parameters    = parameters
         self.taxonomy      = taxonomy 
 
 
@@ -54,21 +55,21 @@ class PipelineComponents:
 
         if component_type.strip().lower() == 'feature_transform':
             if name.lower() == 'none':
-                return Void(self.dataset_shape)
+                return Void(self.dataset_shape, self.parameters)
             elif name.lower() == 'chi_square':
-                return ChiSquare(self.dataset_shape)
+                return ChiSquare(self.dataset_shape, self.parameters)
             elif name.lower() == 'mutual_information':
-                return MutualInformation(self.dataset_shape)
+                return MutualInformation(self.dataset_shape, self.parameters)
             elif name.lower() == 'hfe':
                 return HFE(self.dataset_shape, self.taxonomy)
             elif name.lower() == 'factor_analysis':
-                return FactorAnalysis(self.dataset_shape)
+                return FactorAnalysis(self.dataset_shape, self.parameters)
             elif name.lower() == 'ica':
-                return ICA(self.dataset_shape)
+                return ICA(self.dataset_shape, self.parameters)
             elif name.lower() == 'nmf':
-                return NMF(self.dataset_shape)
+                return NMF(self.dataset_shape, self.parameters)
             elif name.lower() == 'pca':
-                return PCA(self.dataset_shape)
+                return PCA(self.dataset_shape, self.parameters)
             else:
                 sys.exit('ERROR: ' + ' Could not find feature transform method "' + name + '"')
 

@@ -2,8 +2,9 @@ from lokki.feature_transform import FeatureTransformChoice
 
 class Void(FeatureTransformChoice):
 
-    def __init__(self, dataset_shape):
+    def __init__(self, dataset_shape, parameters):
         self.dataset_shape = dataset_shape
+        self.parameters = parameters
 
     def fit(self, hyperparameters, X, y):
         pass

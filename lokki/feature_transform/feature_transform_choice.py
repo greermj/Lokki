@@ -5,7 +5,7 @@ from abc import ABCMeta, abstractmethod
 
 class FeatureTransformChoice(object, metaclass = ABCMeta):
 
-    def __init__(self, dataset_shape):
+    def __init__(self, dataset_shape, parameters):
         pass
 
     @abstractmethod
