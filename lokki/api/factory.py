@@ -54,7 +54,7 @@ class AnalysisFactory:
         self.taxonomy = taxonomy
         self.model_transform_tuples = list(product(feature_transforms, models))
         self.parameters  = {'target_name' : target_name, 'metric' : metric, 'num_iterations' : 5, 'num_folds' : 3}
-        self.pipeline_components = PipelineComponents(self.dataset_shape, self.taxonomy)
+        self.pipeline_components = PipelineComponents(self.dataset_shape, self.parameters, self.taxonomy)
 
         self.analysis_runs = []
 
