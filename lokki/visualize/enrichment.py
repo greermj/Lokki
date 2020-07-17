@@ -29,7 +29,7 @@ def plot_ylabel(ax, list_of_strings, list_of_colors, **kw):
     from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
     bbox_anchor = (-0.07, 0.05) if len(list_of_strings) == 2 else (-0.07, 0.25)
     boxes = [TextArea(text, textprops=dict(color=color, ha='left',va='bottom',rotation=90,**kw)) 
-                 for text,color in zip(list_of_strings[::-1],list_of_colors) ]
+                 for text,color in zip(list_of_strings, list_of_colors) ]
     ybox = VPacker(children=boxes,align="center", pad=0, sep=0)
     anchored_ybox = AnchoredOffsetbox(loc=3, child=ybox, pad=0, frameon=False, bbox_to_anchor=bbox_anchor, 
                                       bbox_transform=ax.transAxes, borderpad=0)
@@ -229,9 +229,14 @@ class Enrichment:
             for color_name, color_values in component_name_color_map.items():
                 patches.append(Line2D([0], [0], marker = legend_shape, color = 'w', label = color_name, markerfacecolor = color_values, markersize = 15))
 
-            ax[i].legend(handles = patches, loc='center')
-            ax[i].set_xticks([])
-            ax[i].set_yticks([])
+            if len(color_map) > 1:
+                ax[i].legend(handles = patches, loc='center')
+                ax[i].set_xticks([])
+                ax[i].set_yticks([])
+            else:
+                ax.legend(handles = patches, loc='center')
+                ax.set_xticks([])
+                ax.set_yticks([])
         
         plt.savefig(self.output_directory + '/legend.png')
         plt.close()
@@ -266,15 +271,21 @@ class Enrichment:
 
         return tuple(factor_labels), tuple(factor_colors)
 
-    # Description: Return the following mapping: {component_type_1 : { name_1 : colors, name_2 : colors, ...} ...}
+    # Description: Return the following mapping: {eg data_transform : { zscore : color, log : color, ...}, ...}
     def get_loaded_color_map(self, component_sets):
 
         color_map = dict()
 
         for component_type, component_set in component_sets.items():
+
+            if len(component_set) == 0:
+                continue 
+
             if not component_type in color_map:
                 color_map[component_type] = dict()
+
             color_options = get_colors(len(component_set)) 
+
             for i, x in enumerate(component_set):
                 color_map[component_type][x] = color_options[i]
         
