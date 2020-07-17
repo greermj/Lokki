@@ -11,10 +11,10 @@ class ZScore(DataTransformationChoice):
         pass
 
     def fit(self, X, y):
-        self.zscore = StandardScaler().fit(X)
+        self.zscore = StandardScaler().fit(X.astype(float))
 
     def transform(self, X, y):
-        data = pd.DataFrame(self.zscore.transform(X), columns = X.columns.values)
+        data = pd.DataFrame(self.zscore.transform(X.astype(float)), columns = X.columns.values)
         data[data > 3] = 3
         data[data <= -3] = -3
         return (data + 3).copy()
