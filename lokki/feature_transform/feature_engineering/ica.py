@@ -8,7 +8,7 @@ class ICA(FeatureTransformChoice):
     def __init__(self, dataset_shape):
         self.dataset_shape = dataset_shape
         self.step_size = int(dataset_shape[1] * 0.30)
-        self.grid = [{'n_components' : x, 'max_iter' : 100, 'tol' : 0.1} for x in np.arange(dataset_shape[1] - 1, step = self.step_size) + 1]
+        self.grid = [{'n_components' : x, 'max_iter' : 100, 'tol' : 0.1} for x in np.arange(1, dataset_shape[1], step = self.step_size) ]
 
     def fit(self, hyperparameters, X, y):
         self.ica = sk.decomposition.FastICA(**hyperparameters).fit(X)
