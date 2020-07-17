@@ -28,9 +28,9 @@ def get_colors(number_of_colors):
 def plot_ylabel(ax, list_of_strings, list_of_colors, **kw):
     from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker, VPacker
     bbox_anchor = (-0.07, 0.05) if len(list_of_strings) == 2 else (-0.07, 0.25)
-    boxes = [TextArea(text, textprops=dict(color=color, ha='left',va='bottom',rotation=90,**kw)) 
-                 for text,color in zip(list_of_strings, list_of_colors) ]
-    ybox = VPacker(children=boxes,align="center", pad=0, sep=0)
+    boxes = [TextArea(text, textprops=dict(color=color, ha='left', va='bottom',rotation=90,**kw)) 
+                 for text,color in zip(list_of_strings, list_of_colors)]
+    ybox = VPacker(children=boxes,align="center", pad=0, sep=5)
     anchored_ybox = AnchoredOffsetbox(loc=3, child=ybox, pad=0, frameon=False, bbox_to_anchor=bbox_anchor, 
                                       bbox_transform=ax.transAxes, borderpad=0)
     ax.add_artist(anchored_ybox)
@@ -253,7 +253,7 @@ class Enrichment:
                 elif component_type == 'feature_transform':
                     factor_labels.append('■')
                 elif component_type == 'model':
-                    factor_labels.append('▶')
+                    factor_labels.append('▲')
                 else:
                     sys.exit("ERROR: Couldn't find label shape check enrichment.py (tuple)")
                 factor_colors.append(color_map[component_type][x])
@@ -264,7 +264,7 @@ class Enrichment:
             elif component_type == 'feature_transform':
                 factor_labels.append('■')
             elif component_type == 'model':
-                factor_labels.append('▶')
+                factor_labels.append('▲')
             else:
                 sys.exit("ERROR: Couldn't find label shape check enrichment.py (string)")
             factor_colors.append(color_map[component_type][key])
