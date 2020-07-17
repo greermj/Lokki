@@ -85,7 +85,7 @@ class PipelineComponents:
                 return ExtraTree()
             if name.lower() == 'logistic_regression':
                 return LogisticRegressionModel()
-            if name.lower() == 'ridge_classifier':
+            if name.lower() == 'ridge_regression':
                 return RidgeClassifierModel()
             if name.lower() == 'adaboost':
                 return AdaBoost()
