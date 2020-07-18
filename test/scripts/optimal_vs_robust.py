@@ -24,15 +24,16 @@ def get_score(pred, y, metric = 'auc'):
         score = recall_score(np.array(y).astype(bool), np.array(pred).astype(bool))
     return score
 
-#dataset = sys.argv[1]
+dataset = 'ahn' #sys.argv[1]
+path_to_feathers = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/feathers/'#sys.argv[2]
+path_to_data = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/all/'#sys.argv[3]
+path_to_taxonomy = './pipeline_study/taxonomy/'#sys.argv[4]
+path_to_output = './out/'#sys.argv[5]
+pheno_name_one = 'control'#sys.argv[6]
+pheno_name_two = 'cancer'#sys.argv[7]
 
-dataset = 'ahn'
-path_to_feathers = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/feathers/'
-path_to_data = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/all/'
-path_to_taxonomy = './pipeline_study/taxonomy/'
-path_to_output = './out/'
-pheno_name_one = 'control'
-pheno_name_two = 'cancer'
+if not os.path.exists(path_to_output + '/' + dataset):
+    os.makedirs(path_to_output + '/' + dataset)
 
 otu  = read_dataframe(path_to_feathers + '/' + dataset + '.0.03.otu.feather')
 meta = pd.read_csv(path_to_data + '/' + dataset + '.metadata', sep='\t')
@@ -94,5 +95,4 @@ for fold in range(num_folds):
         fold_results['robust_k_' + str(i)] = get_score(robust_test_preds, y_test)
 
     cv_results = cv_results.append(fold_results, ignore_index = True)
-
-print(cv_results)
+    cv_results.to_csv(path_to_output + '/' + dataset + '/' + dataset + '_cv_results.csv', index = False)
