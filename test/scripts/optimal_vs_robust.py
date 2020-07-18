@@ -55,8 +55,6 @@ analysis_config = lokki.configure(dataset = X_train,
 
 analysis_object = analysis_config.run()
 
-
-
 optimal = lokki.select(dataset = X_train,
                        taxonomy = tax,
                        analysis_object = analysis_object)
@@ -64,9 +62,8 @@ optimal = lokki.select(dataset = X_train,
 robust = lokki.select(dataset = X_train,
                       taxonomy = tax,
                       mode = 'robust',
-                      k = 2,
+                      k = 3,
                       analysis_object = analysis_object)
-
 
 
 #X_train.to_csv('./train_data_' + dataset + '_tumor.csv', index = False)
