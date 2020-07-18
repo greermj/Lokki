@@ -30,7 +30,7 @@ def custom(**kwargs):
     return AnalysisObject(results, scoring_metric_name)
 
 def select(**kwargs):
-    return ModelSelection(kwargs['dataset'], kwargs['taxonomy'], kwargs['mode'], kwargs['k'], kwargs['analysis_object'])
+    return ModelSelection(kwargs)
 
 def plot(**kwargs):
 
@@ -78,17 +78,18 @@ class AnalysisFactory:
         
         for i, analysis in enumerate(self.analysis_runs):
 
-            current_data_transform   = '_'.join(analysis.data_transform_instance.get_name().lower().split(' '))
+            current_data_transform    = '_'.join(analysis.data_transform_instance.get_name().lower().split(' '))
             current_feature_transform = '_'.join(analysis.feature_transform_instance.get_name().lower().split(' '))
-            current_model     = '_'.join(analysis.model_instance.get_name().lower().split(' '))
+            current_model             = '_'.join(analysis.model_instance.get_name().lower().split(' '))
 
             print('Analyzing: ' + current_data_transform + '_' + current_feature_transform + '_' + current_model)
 
             # The order of the key is important and I assume this order in components.py
-            self.results.append({'key'   : (current_data_transform.strip().lower(), 
-                                            current_feature_transform.strip().lower(), 
-                                            current_model.strip().lower()), 
-                                 'value' : analysis.get_performance(self.dataset),
-                                 'grid'  : analysis.grid})
+            self.results.append({'key'          : (current_data_transform.strip().lower(), 
+                                                   current_feature_transform.strip().lower(), 
+                                                   current_model.strip().lower()), 
+                                 'value'        : analysis.get_performance(self.dataset),
+                                 'grid'         : analysis.grid,
+                                 'parameters'   : analysis.parameters})
 
         return AnalysisObject(self.results, self.parameters['metric'])
