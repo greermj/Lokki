@@ -14,7 +14,7 @@ class FactorAnalysis(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         self.factor = sk.decomposition.FactorAnalysis(**hyperparameters).fit(X)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.factor.transform(X)
 
     def get_name(self):

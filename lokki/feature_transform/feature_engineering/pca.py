@@ -21,7 +21,7 @@ class PCA(FeatureTransformChoice):
             # Select the fewest number of features in all other cases 
             self.pca = sklearnPCA(**self.grid[0]).fit(X)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.pca.transform(X)
 
     def get_name(self):

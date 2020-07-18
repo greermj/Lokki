@@ -9,7 +9,7 @@ class Void(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         pass
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return X
 
     def get_name(self):

@@ -9,10 +9,10 @@ class Log(DataTransformationChoice):
     def __init__(self):
         pass
 
-    def fit(self, X, y):
+    def fit(self, X, y = None):
         pass
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return pd.DataFrame(np.log(X.values + 1), columns = X.columns.values)
 
     def get_name(self):

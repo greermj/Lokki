@@ -9,11 +9,11 @@ class DataTransformationChoice(object, metaclass = ABCMeta):
         pass
 
     @abstractmethod
-    def fit(self, X, y):
+    def fit(self, X, y = None):
         pass
 
     @abstractmethod
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         pass
 
     @abstractmethod

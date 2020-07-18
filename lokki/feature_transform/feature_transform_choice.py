@@ -13,7 +13,7 @@ class FeatureTransformChoice(object, metaclass = ABCMeta):
         pass
 
     @abstractmethod
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         pass
 
     @abstractmethod

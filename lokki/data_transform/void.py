@@ -5,10 +5,10 @@ class NoPreprocessing(DataTransformationChoice):
     def __init__(self):
         pass
 
-    def fit(self, X, y):
+    def fit(self, X, y = None):
         pass
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return X
 
     def get_name(self):

@@ -35,7 +35,7 @@ class HFE(FeatureTransformChoice):
             self._leaf_ig_filter(y)
             self.valid_ids = [x.identifier for x in self.tree.all_nodes() if x.data['valid']]
             
-    def transform(self, X, y):
+    def transform(self, X, y = None):
 
         # Build a new tree (Note: The self.tree is built on training data, so we need a new tree for unseen data)
         new_tree = Tree()

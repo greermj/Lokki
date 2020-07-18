@@ -14,7 +14,7 @@ class NMF(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         self.nmf = sk.decomposition.NMF(**hyperparameters).fit(X)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.nmf.transform(X)
 
     def get_name(self):

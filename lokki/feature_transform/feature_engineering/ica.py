@@ -14,7 +14,7 @@ class ICA(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         self.ica = sk.decomposition.FastICA(**hyperparameters).fit(X)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.ica.transform(X)
 
     def get_name(self):

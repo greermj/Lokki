@@ -15,7 +15,7 @@ class MutualInformation(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         self.mutual = SelectKBest(mutual_info_classif, **hyperparameters).fit(X,y)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.mutual.transform(X)
 
     def get_name(self):

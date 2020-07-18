@@ -15,7 +15,7 @@ class ChiSquare(FeatureTransformChoice):
     def fit(self, hyperparameters, X, y):
         self.chi = SelectKBest(chi2, **hyperparameters).fit(X,y)
 
-    def transform(self, X, y):
+    def transform(self, X, y = None):
         return self.chi.transform(X)
 
     def get_name(self):
