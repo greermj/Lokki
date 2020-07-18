@@ -6,22 +6,23 @@ import dill as pickle
 import sys
 import lokki
 
-#filename = sys.argv[1]
+dataset = 'baxter'
+path_to_dataset  = './dev/baxter/sample_data_baxter_tumor.csv'
+path_to_taxonomy = './dev/baxter/baxter.taxonomy'
 
-data = pd.read_csv('./dev/baxter/sample_data_baxter_tumor.csv')
-taxonomy = pd.read_csv('./dev/baxter/baxter.taxonomy', sep='\t')
+data = pd.read_csv(path_to_dataset)
+data = data.loc[:, ((data == 0).mean() < 0.7) | np.array([x.lower().startswith('target') for x in data.columns.values])].copy()
 
-# If less than 70% are missing or its the target column add the column (eg 55% missing = ok, 65% missing = ok, 71% missing = not ok)
-data = data.loc[:, ((data == 0).mean() < 0.7) | (data.columns.values == 'target')].copy()
+taxonomy = pd.read_csv(path_to_taxonomy, sep='\t')
 
 analysis = lokki.configure(dataset = data,
                            target_name = 'target',
-                           data_transforms = ['none'],# 'log', 'zscore'],
-                           feature_transforms = ['none', 'chi_square'],#'hfe', 'chi_square', 'mutual_information', 'factor', 'ica', 'nmf'],
-                           models = ['random_forest', 'decision_tree'],# 'lda', 'qda', 'extra_tree', 'logistic_regression', 'adaboost', 'gradient_boosting', 'svm', 'ridge'],
+                           data_transforms = ['zscore'],#['none', 'log', 'zscore'],
+                           feature_transforms = ['none', 'chi_square', 'pca', 'ica', 'nmf', 'factor_analysis', 'mutual_information', 'hfe'],#['none', 'pca', 'hfe', 'chi_square', 'mutual_information', 'factor_analysis', 'ica', 'nmf'],
+                           models = ['decision_tree'],#['random_forest', 'decision_tree', 'lda', 'qda', 'extra_tree', 'logistic_regression', 'adaboost', 'gradient_boosting', 'svm', 'ridge'],
                            metric = 'auc',
                            taxonomy = taxonomy)
 
 results = analysis.run()
 
-pickle.dump(results, open('neo.p', 'wb'))
+pickle.dump(results, open(dataset + '_tumor_results.p', 'wb'))
