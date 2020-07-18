@@ -79,7 +79,6 @@ class ModelSelection:
 
         print('Selected Pipeline: ' + str(pipeline_build))
 
-        '''
         # Split into data and targets 
         X = self.dataset.loc[:, [x.lower().startswith('otu') for x in self.dataset.columns.values]].copy().reset_index(drop = True)
         y = self.dataset.loc[:, [x.lower().startswith('target') for x in self.dataset.columns.values]].copy().reset_index(drop = True).iloc[:,0].values
@@ -98,8 +97,7 @@ class ModelSelection:
 
         # Train the model 
         self.analysis_model.fit(X_train, y)
-        '''
-        
+
     def predict(self, X):
         return self.analysis_model.predict(X)
 
