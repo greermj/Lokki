@@ -28,17 +28,15 @@ class AdaBoost(ModelChoice):
 
         score = None
         pred = model.predict(X_test)
+
         if parameters['metric'] == 'auc':
-            pred = model.predict(X_test)
-            score = roc_auc_score(np.array(y_test) == pred[0], pred == pred[0])
+            score = roc_auc_score(np.array(y_test).astype(bool), pred.astype(bool))
 
         elif parameters['metric'] == 'precision':
-            pred = model.predict(X_test)
-            score = precision_score(np.array(y_test) == pred[0], pred == pred[0])
+            score = precision_score(np.array(y_test).astype(bool), pred.astype(bool))
 
         elif parameters['metric'] == 'recall':
-            pred = model.predict(X_test)
-            score = recall_score(np.array(y_test) == pred[0], pred == pred[0])
+            score = recall_score(np.array(y_test).astype(bool), pred.astype(bool))
 
         return score
 
