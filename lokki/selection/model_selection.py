@@ -58,16 +58,16 @@ class ModelSelection:
             if (robust_data_transform == None) or (robust_feature_transform == None) or (robust_model == None):
                 print('WARNING: Could not find robust pipeline components, selecting optimal choice. Try reducing the parameter k')
                 pipeline_build = self.results[0]['key']
-                grid = self.results[0]['grid']
+                self.grid = self.results[0]['grid']
 
             else:
                 pipeline_build = (robust_data_transform, robust_feature_transform, robust_model)
-                grid = self._get_robust_grid(pipeline_build)
+                self.grid = self._get_robust_grid(pipeline_build)
 
         else:
             # Return the highest scoring pipeline
             pipeline_build = self.results[0]['key']
-            grid = self.results[0]['grid']
+            self.grid = self.results[0]['grid']
 
         # Retrieve components 
         self.analysis_data_transform    = self.pipeline_components.get_component( pipeline_build[0].lower(),    'data_transform')
@@ -77,6 +77,7 @@ class ModelSelection:
         # Retrieve default hyperparameter grid
         self.hyperparameter_grid = self.analysis_feature_transform.hyperparameter_grid()
 
+        self.pipeline_build = pipeline_build
         print('Selected Pipeline: ' + str(pipeline_build))
 
         # Split into data and targets 
@@ -88,18 +89,23 @@ class ModelSelection:
         X_train = self.analysis_data_transform.transform(X, y)
 
         # Apply any feature transforms 
-        if grid == None:
+        if self.grid == None:
             self.analysis_feature_transform.fit(X_train, y)
             X_train = self.analysis_feature_transform.transform(X_train, y)
         else:
-            self.analysis_feature_transform.fit(grid, X_train, y)
+            self.analysis_feature_transform.fit(self.grid, X_train, y)
             X_train = self.analysis_feature_transform.transform(X_train, y)
 
         # Train the model 
         self.analysis_model.fit(X_train, y)
 
-    def predict(self, X):
-        return self.analysis_model.predict(X)
+    def predict(self, data):
+
+        X = data.loc[:, [x.lower().startswith('otu')    for x in data.columns.values]].copy().reset_index(drop = True).copy()
+        data_transformed_X = self.analysis_data_transform.transform(X)
+        print(data_transformed_X)
+
+        #return self.analysis_model.predict(X)
 
     # Description: Updates the count of the number of times the element was hit in the dictionary of counts
     def _update_count(self, elem, dict_counts):
