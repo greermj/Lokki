@@ -99,13 +99,12 @@ class ModelSelection:
         # Train the model 
         self.analysis_model.fit(X_train, y)
 
+    # Description: Apply data transform, feature selection or engineering, and model.predict()
     def predict(self, data):
-
         X = data.loc[:, [x.lower().startswith('otu')    for x in data.columns.values]].copy().reset_index(drop = True).copy()
-        data_transformed_X = self.analysis_data_transform.transform(X)
-        print(data_transformed_X)
-
-        #return self.analysis_model.predict(X)
+        data_transformed_X    = self.analysis_data_transform.transform(X).copy()
+        feature_transformed_X = self.analysis_feature_transform.transform(data_transformed_X).copy()
+        return self.analysis_model.predict(feature_transformed_X)
 
     # Description: Updates the count of the number of times the element was hit in the dictionary of counts
     def _update_count(self, elem, dict_counts):
