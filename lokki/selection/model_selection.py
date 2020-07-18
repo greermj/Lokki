@@ -74,9 +74,6 @@ class ModelSelection:
         self.analysis_feature_transform = self.pipeline_components.get_component( pipeline_build[1].lower(), 'feature_transform')
         self.analysis_model             = self.pipeline_components.get_component( pipeline_build[2].lower(),             'model')
 
-        # Retrieve default hyperparameter grid
-        self.hyperparameter_grid = self.analysis_feature_transform.hyperparameter_grid()
-
         self.pipeline_build = pipeline_build
         print('Selected Pipeline: ' + str(pipeline_build))
 
