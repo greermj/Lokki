@@ -4,17 +4,18 @@ import sys
 
 class ModelSelection:
 
-    def __init__(self, dataset, taxonomy, mode, k, analysis_object):
+    def __init__(self, kwargs):
 
-        self.dataset = dataset
-        self.dataset_shape = dataset.shape
-        self.taxonomy = taxonomy 
-        self.mode = mode
-        self.k = k
-        self.analysis_object = analysis_object
-        self.pipeline_components = PipelineComponents(self.dataset_shape, self.taxonomy)
+        self.dataset         = kwargs['dataset'] if 'dataset' in kwargs else sys.exit('ERROR: Could not find dataset to perform model selection')
+        self.taxonomy        = kwargs['taxonomy'] if 'taxonomy' in kwargs else sys.exit('ERROR: Could not find taxonomy to perform model selection')
+        self.mode            = kwargs['mode'].lower() if 'mode' in kwargs else 'optimal'
+        self.k               = kwargs['k'] if 'k' in kwargs else 3
+        self.analysis_object = kwargs['analysis_object'] if 'analysis_object' in kwargs else sys.exit('ERROR: Could not find analysis object to perform model selection')
+        self.parameters      = self.analysis_object.results[0]['parameters']
+        self.dataset_shape = self.dataset.shape
+        self.pipeline_components = PipelineComponents(self.dataset_shape, self.parameters, self.taxonomy)
 
-        self.results = sorted(analysis_object.results, 
+        self.results = sorted(self.analysis_object.results, 
                               key = lambda x : x['value'], 
                               reverse = True)
 
@@ -76,6 +77,9 @@ class ModelSelection:
         # Retrieve default hyperparameter grid
         self.hyperparameter_grid = self.analysis_feature_transform.hyperparameter_grid()
 
+        print('Selected Pipeline: ' + str(pipeline_build))
+
+        '''
         # Split into data and targets 
         X = self.dataset.loc[:, [x.lower().startswith('otu') for x in self.dataset.columns.values]].copy().reset_index(drop = True)
         y = self.dataset.loc[:, [x.lower().startswith('target') for x in self.dataset.columns.values]].copy().reset_index(drop = True).iloc[:,0].values
@@ -94,6 +98,7 @@ class ModelSelection:
 
         # Train the model 
         self.analysis_model.fit(X_train, y)
+        '''
         
     def predict(self, X):
         return self.analysis_model.predict(X)
