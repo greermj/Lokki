@@ -17,9 +17,7 @@ results = pickle.load(open('./pipeline_study/data/baxter/all/baxter_tumor_result
 
 lokki.plot(analysis_object = results,
            plot_type = 'enrichment',
-           #filters = ['gradient_boosting'],
            mode = 'dual',
-           min_hits = 4,
+           min_hits = 2,
            num = 20,
-           order = 'desc',
-           max_combn = 2)
+           order = 'asc')

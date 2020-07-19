@@ -82,15 +82,18 @@ class Enrichment:
 
             # Create a list of the ranks (ie 1 -> 1st best, 4 -> 4th best, etc) for the ranks of the current dimension and then every other dimension 
             enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
-            other_ranks        = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
+            other_ranks      = [j for j, x in enumerate(ranked_data) if not j in enrichment_ranks]
+
+            enrichment_scores = [x['value'] for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
+            other_scores      = [x['value'] for j, x in enumerate(ranked_data) if j in other_ranks]
 
             # If the ranks are in general less thna the other ranks then they cluster to the left and the sign of ks should be positive 
             ks_sign = np.nan
-            if len(enrichment_ranks) != 0:
-                ks_sign          = 1 if np.mean(enrichment_ranks) < np.median(other_ranks) else -1
+            if len(enrichment_scores) != 0:
+                ks_sign          = 1 if np.mean(enrichment_scores) < np.median(other_scores) else -1
 
             # If enrichment_ranks and other_ranks are both not empty use the scipy method else return (0, 1) which is the worst ks stat a pvalue possible 
-            ks_stat, p_value = ks_2samp(enrichment_ranks, other_ranks) if enrichment_ranks and other_ranks else (0, 1) 
+            ks_stat, p_value = ks_2samp(enrichment_scores, other_scores) if enrichment_ranks and other_ranks else (0, 1) 
 
             results[dimension] = {'name' : dimension, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
@@ -109,13 +112,16 @@ class Enrichment:
 
                 # See above (ie same procedure for single dimension used below)
                 enrichment_ranks = [i for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
-                other_ranks      = [j for j in range(len(ranked_data)) if not j in enrichment_ranks]
+                other_ranks      = [j for j, x in enumerate(ranked_data) if not j in enrichment_ranks]
+
+                enrichment_scores = [x['value'] for i, x in enumerate(ranked_data) if enrichment_bars[i] == 1]
+                other_scores      = [x['value'] for j, x in enumerate(ranked_data) if j in other_ranks]
 
                 ks_sign = np.nan
-                if len(enrichment_ranks) != 0:
-                    ks_sign          = 1 if np.mean(enrichment_ranks) < np.median(other_ranks) else -1
+                if len(enrichment_scores) != 0:
+                    ks_sign          = 1 if np.mean(enrichment_scores) < np.median(other_scores) else -1
 
-                ks_stat, p_value = ks_2samp(enrichment_ranks, other_ranks) if enrichment_ranks and other_ranks else (0, 1) 
+                ks_stat, p_value = ks_2samp(enrichment_scores, other_scores) if enrichment_ranks and other_ranks else (0, 1) 
 
                 results[combination] = {'name' : combination, 'bars' : enrichment_bars.copy(), 'ks_stat' : ks_stat * ks_sign, 'p_value' : p_value}
 
