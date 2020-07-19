@@ -24,7 +24,7 @@ def get_score(pred, y, metric = 'auc'):
         score = recall_score(np.array(y).astype(bool), np.array(pred).astype(bool))
     return score
 
-dataset = 'ahn' #sys.argv[1]
+dataset = 'zeller' #sys.argv[1]
 path_to_feathers = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/feathers/'#sys.argv[2]
 path_to_data = '/Users/michael/Documents/Labs/Zhang/Lokki/dev/pipeline_test_data/all/'#sys.argv[3]
 path_to_taxonomy = './pipeline_study/taxonomy/'#sys.argv[4]
@@ -42,7 +42,7 @@ missing_threshold = 0.80
 
 # The baxter metadata file does not include disease classifications for every sample so I needed to only include samples
 # for which we have a disease classification
-num_folds = 3
+num_folds = 5
 mult = 13
 max_k = 10
 cv_results = pd.DataFrame()
@@ -65,9 +65,9 @@ for fold in range(num_folds):
 
     analysis_config = lokki.configure(dataset = X_train,
                                       target_name = 'target',
-                                      data_transforms = ['none', 'log'],#['none', 'log', 'zscore'],
-                                      feature_transforms = ['none', 'pca', 'chi_square', 'nmf'],#['none', 'pca', 'hfe', 'chi_square', 'mutual_information', 'factor_analysis', 'ica', 'nmf'],
-                                      models = ['ridge_regression', 'svm', 'decision_tree', 'logistic_regression'],#['random_forest', 'decision_tree', 'lda', 'qda', 'extra_tree', 'logistic_regression', 'adaboost', 'gradient_boosting', 'svm', 'ridge_regression'],
+                                      data_transforms = ['none', 'log', 'zscore'],#['none', 'log', 'zscore'],
+                                      feature_transforms = ['none', 'pca'],# 'hfe', 'chi_square', 'mutual_information', 'factor_analysis', 'ica'],#['none', 'pca', 'hfe', 'chi_square', 'mutual_information', 'factor_analysis', 'ica', 'nmf'],
+                                      models = ['decision_tree', 'extra_tree'],# 'adaboost', 'gradient_boosting', 'svm', 'ridge_regression'],#['random_forest', 'decision_tree', 'lda', 'qda', 'extra_tree', 'logistic_regression', 'adaboost', 'gradient_boosting', 'svm', 'ridge_regression'],
                                       metric = 'auc',
                                       taxonomy = tax)
 
