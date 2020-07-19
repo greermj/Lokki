@@ -44,7 +44,7 @@ class PipelineComponents:
     def get_component(self, name, component_type):
 
         if component_type.strip().lower() == 'data_transform':
-            if name.lower() == 'none':
+            if name.lower() == 'none' or name.lower() == 'no_data_transform':
                 return NoPreprocessing()
             elif name.lower() == 'log':
                 return Log()
@@ -54,7 +54,7 @@ class PipelineComponents:
                 sys.exit('ERROR: ' + ' Could not find data transform method "' + name + '"')
 
         if component_type.strip().lower() == 'feature_transform':
-            if name.lower() == 'none':
+            if name.lower() == 'none' or name.lower() == 'no_feature_transform':
                 return Void(self.dataset_shape, self.parameters)
             elif name.lower() == 'chi_square':
                 return ChiSquare(self.dataset_shape, self.parameters)
