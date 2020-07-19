@@ -42,9 +42,7 @@ class Enrichment:
         self.analysis_object = analysis_object
 
         # Set arguments using kwargs if found else set using default 
-        self.max_combn = kwargs['max_combn'] if 'max_combn' in kwargs else 2
         self.min_hits  = kwargs['min_hits']  if 'min_hits'  in kwargs else 1
-        self.max_combn = kwargs['max_combn'] if 'max_combn' in kwargs else 2
         self.filters   = kwargs['filters']   if 'filters'   in kwargs else None
         self.mode      = kwargs['mode']      if 'mode'      in kwargs else 'single'
         self.order     = kwargs['order']     if 'order'     in kwargs else 'asc'
