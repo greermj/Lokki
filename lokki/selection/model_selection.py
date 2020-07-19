@@ -86,12 +86,8 @@ class ModelSelection:
         X_train = self.analysis_data_transform.transform(X, y)
 
         # Apply any feature transforms 
-        if self.grid == None:
-            self.analysis_feature_transform.fit(X_train, y)
-            X_train = self.analysis_feature_transform.transform(X_train, y)
-        else:
-            self.analysis_feature_transform.fit(self.grid, X_train, y)
-            X_train = self.analysis_feature_transform.transform(X_train, y)
+        self.analysis_feature_transform.fit(self.grid, X_train, y)
+        X_train = self.analysis_feature_transform.transform(X_train, y)
 
         # Train the model 
         self.analysis_model.fit(X_train, y)
