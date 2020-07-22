@@ -1,4 +1,4 @@
-# Lokki: Integrative machine learning library for cross model analysis
+# Lokki: An automatic machine learning python framework for robust pipeline identification and evaluation 
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
