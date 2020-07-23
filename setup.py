@@ -15,6 +15,7 @@ setuptools.setup(
         'pandas==0.25.0',
         'treelib==1.6.1',
         'matplotlib==3.2.2',
+        'dill==0.3.2',
         'scikit-learn==0.20.3',
         'scikit-optimize==0.7.4'
     ],
