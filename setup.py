@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="lokki", 
-    version="0.0.1",
+    version="0.0.2",
     author="Michael Greer",
     author_email="michael.j.greer1@gmail.com",
     description="Lokki: an automatic machine learning framework for 16s metagenomic data",
