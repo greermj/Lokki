@@ -18,7 +18,7 @@ setuptools.setup(
         'scikit-learn==0.20.3',
         'scikit-optimize==0.7.4'
     ],
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/greermj/Lokki",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -36,6 +36,5 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    python_requires='>=3.6',
+    ]
 )
