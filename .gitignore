@@ -7,5 +7,6 @@
 *pdf
 *xlsx
 dev/
+test/
 venv/
 *pyc
