@@ -3,7 +3,7 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
 
-Lokki is an open source Python library for performing cross model analysis using various machine learning models and dimensionality reduction techniques. The library focuses on being highly modular and extensible to allow additional models and dimensionality reduction approaches to be added seamlessly.
+Lokki is an open source Python automatic machine learning framework for 16s metagenomic data. The library focuses on being highly modular and extensible to allow additional models and dimensionality reduction approaches to be added seamlessly.
 
 Under the hood, the library uses many of the APIs from existing machine learning libraries to maintain high quality data pipelines and learning models. One of the main goals of Lokki is to enable fast experimentation, by leveraging the existing tools and pipelines provided by `numpy`, `pandas`, `matplotlib`, and `sklearn`.
 
@@ -42,19 +42,34 @@ The following code example illustrates basic library usage
 import lokki
 import pandas as pd
 
-data = pd.read_csv('./data/test.csv')
+# Read data
+path_to_dataset  = './docs/data/sample_data_baxter_tumor.csv'
+path_to_taxonomy = './docs/data/baxter.taxonomy'
 
-analysis = lokki.configure(models = ['random_forest', 'logistic_regression'],
+data = pd.read_csv(path_to_dataset)
+taxonomy = pd.read_csv(path_to_taxonomy, sep='\t')
+
+# Zero filter
+data = data.loc[:, ((data == 0).mean() < 0.7) | np.array([x.lower().startswith('target') for x in data.columns.values])].copy()
+
+# Configure and run 
+analysis = lokki.configure(dataset = data,
                            target_name = 'target',
-                           transforms = ['pca', 'chi_square', 'none'],
-                           dataset = data,
-                           metric = 'auc')
+                           data_transforms = ['zscore'],
+                           feature_transforms = ['chi_square', 'mutual_information', 'factor_analysis', 'mutual_information'],
+                           models = ['decision_tree', 'random_forest', 'ridge_regression'],
+                           metric = 'auc',
+                           taxonomy = taxonomy)
 
 results = analysis.run()
 
+# Enrichment analysis visualization
 lokki.plot(analysis_object = results,
-           plot_type = 'stacked',
-           output_filename = 'out.png')
+           plot_type = 'enrichment',
+           mode = 'dual',
+           min_hits = 2,
+           num = 20,
+           order = 'asc')
 
 ```
 
