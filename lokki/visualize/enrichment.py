@@ -90,7 +90,7 @@ class Enrichment:
             # If the ranks are in general less thna the other ranks then they cluster to the left and the sign of ks should be positive 
             ks_sign = np.nan
             if len(enrichment_scores) != 0:
-                ks_sign          = 1 if np.mean(enrichment_scores) < np.median(other_scores) else -1
+                ks_sign          = 1 if np.mean(enrichment_scores) > np.mean(other_scores) else -1
 
             # If enrichment_ranks and other_ranks are both not empty use the scipy method else return (0, 1) which is the worst ks stat a pvalue possible 
             ks_stat, p_value = ks_2samp(enrichment_scores, other_scores) if enrichment_ranks and other_ranks else (0, 1) 
@@ -119,7 +119,7 @@ class Enrichment:
 
                 ks_sign = np.nan
                 if len(enrichment_scores) != 0:
-                    ks_sign          = 1 if np.mean(enrichment_scores) < np.median(other_scores) else -1
+                    ks_sign          = 1 if np.mean(enrichment_scores) > np.mean(other_scores) else -1
 
                 ks_stat, p_value = ks_2samp(enrichment_scores, other_scores) if enrichment_ranks and other_ranks else (0, 1) 
 
@@ -215,7 +215,7 @@ class Enrichment:
             plt.close()
 
         # Output legend
-        fig, ax = plt.subplots(nrows = len(color_map), ncols = 1, figsize = (4, 8))
+        fig, ax = plt.subplots(nrows = len(color_map), ncols = 1, figsize = (4, 12))
 
         for i, (component_type, component_name_color_map) in enumerate(color_map.items()):
 
