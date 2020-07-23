@@ -40,7 +40,10 @@ The following code example illustrates basic library usage
 ```bash
 
 import lokki
+
+import numpy as np
 import pandas as pd
+import dill as pickle
 
 # Read data
 path_to_dataset  = './docs/data/sample_data_baxter_tumor.csv'
@@ -62,6 +65,9 @@ analysis = lokki.configure(dataset = data,
                            taxonomy = taxonomy)
 
 results = analysis.run()
+
+# Save results 
+pickle.dump(results, open('results.p', 'wb'))
 
 # Enrichment analysis visualization
 lokki.plot(analysis_object = results,
